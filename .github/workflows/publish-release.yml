@@ -1,0 +1,40 @@
+name: Publish Blind Pew 0.1.0-2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/publish-release.yml
+      - .github/scripts/publish-release.py
+      - .github/release-notes/v0.1.0-2.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-blind-pew-v0.1.0-2
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.repository == 'gagafes/blind-pew' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Check out the exact tested release source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: fcd66d7577e4053a6a2c1b71c2374ecd8190f940
+          path: .release-source
+          persist-credentials: false
+      - name: Verify, upload and publish the approved release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 .github/scripts/publish-release.py
