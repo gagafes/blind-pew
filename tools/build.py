@@ -93,7 +93,7 @@ def stage(dest):
     xml.parent.mkdir(parents=True, exist_ok=True)
     xml.write_bytes(component_xml())
     doc = dest / 'usr/share/doc/blind-pew'
-    (doc / 'docs').mkdir()
+    (doc / 'docs').mkdir(exist_ok=True)
     for name in ('README.be.md', 'README.uk.md', 'README.de.md', 'README.ru.md', 'README.md'):
         # Download links belong to the repository, not the installed package.
         content = (ROOT / name).read_text(encoding='utf-8')
