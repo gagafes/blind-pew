@@ -3,7 +3,7 @@
 """Event-driven active input-source monitor."""
 import gi
 gi.require_version('IBus', '1.0')
-from gi.repository import Gio, GLib, IBus
+from gi.repository import Gio, GLib, GObject, IBus
 from .catalog import country_for, profile_title
 from .i18n import tr
 from . import integration
@@ -28,8 +28,10 @@ class InputMonitor:
                 self.settings_handler = self.settings.connect('changed', lambda *_: self._render())
             except RuntimeError:
                 pass
-        IBus.init()
-        self.owns_bus = bus is None
+        # GTK's input module initializes IBus itself. Calling IBus.init again
+        # registers its resources twice on 1.5.29 (Ubuntu 24.04), causing an
+        # infinite allocation loop. Only this serialization type is needed.
+        GObject.type_ensure(IBus.EngineDesc.__gtype__)
         self.bus = bus or IBus.Bus.new_async()
         self.bus.set_watch_ibus_signal(True)
         self.handlers = [self.bus.connect('connected', lambda *_: self.refresh()),
@@ -108,6 +110,8 @@ class InputMonitor:
         self._render()
 
     def stop(self):
+        if self.stopped:
+            return
         self.stopped = True
         self.cancel.cancel()
         for handler in self.handlers:
@@ -115,7 +119,9 @@ class InputMonitor:
         self.handlers.clear()
         if self.settings_handler:
             self.settings.disconnect(self.settings_handler)
-        if self.owns_bus:
-            self.bus.destroy()
+            self.settings_handler = None
+        # IBus.Bus is a process-wide singleton, also used by GTK's input
+        # contexts. Release our reference without destroying their connection.
+        self.bus = None
         self.changed = lambda *args: None
         self.source_changed = lambda source: None

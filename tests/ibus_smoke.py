@@ -36,9 +36,14 @@ ctx.focus_in()
 
 
 def select(name):
-    ctx.set_engine(name)
-    pump(0.3)
-    engine = ctx.get_engine()
+    assert bus.set_global_engine(name), name
+    deadline = time.monotonic() + 5
+    engine = None
+    while time.monotonic() < deadline:
+        pump()
+        engine = ctx.get_engine()
+        if engine and engine.get_name() == name:
+            break
     assert engine and engine.get_name() == name, (name, engine.get_name() if engine else None)
     committed.clear()
     preedits.clear()

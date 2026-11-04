@@ -10,12 +10,12 @@ import gi
 
 gi.require_version('Gtk', sys.argv[1])
 gi.require_version('IBus', '1.0')
-from gi.repository import GLib, Gtk, IBus
+from gi.repository import GLib, GObject, Gtk, IBus
 
 faulthandler.dump_traceback_later(15, repeat=True)
 print('START GTK', sys.argv[1], flush=True)
 Gtk.init()
-IBus.init()
+GObject.type_ensure(IBus.EngineDesc.__gtype__)
 print('GTK initialized', sys.argv[1], flush=True)
 window = Gtk.Window(title='Blind Pew installed typing test')
 window.set_default_size(600, 100)

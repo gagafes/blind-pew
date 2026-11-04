@@ -12,6 +12,8 @@ can upgrade normally.
   activation retains recovery information. Preserve independent user changes.
 - Handle empty Xfce shortcut profiles and missing GNOME shortcut schemas.
 - Require the Xfconf client library even when APT recommendations are disabled.
+- Leave GTK's shared IBus connection intact when stopping the input monitor.
+- Avoid duplicate IBus initialization and unbounded resource allocation on Ubuntu 24.04.
 - Publish generated tray icons atomically without following cache symlinks.
 - Convert large CLI input in bounded chunks, including text without newlines.
 - Include screenshots and release/security documentation in the DEB.

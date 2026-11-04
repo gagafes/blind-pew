@@ -54,6 +54,12 @@ jobs:
           lintian --fail-on error dist/*.deb
       - name: Install, upgrade and exercise the packaged program
         run: |
+          # Minimal Ubuntu images omit translations/manuals unless requested.
+          cat > /etc/dpkg/dpkg.cfg.d/zz-blind-pew-test-payload <<'EOF'
+          path-include=/usr/share/locale/*
+          path-include=/usr/share/doc/blind-pew/*
+          path-include=/usr/share/man/man1/blind-pew.1.gz
+          EOF
           apt-get install -y ./downloads/blind-pew_0.1.0-1_all.deb
           apt-get install -y ./dist/blind-pew_0.1.0-2_all.deb
           dpkg --verify blind-pew
@@ -124,6 +130,11 @@ jobs:
           # Let GNOME use its built-in non-systemd login manager here.
           if test -d /run/systemd/seats; then rmdir /run/systemd/seats; fi
           /usr/bin/python3 tools/build.py
+          cat > /etc/dpkg/dpkg.cfg.d/zz-blind-pew-test-payload <<'EOF'
+          path-include=/usr/share/locale/*
+          path-include=/usr/share/doc/blind-pew/*
+          path-include=/usr/share/man/man1/blind-pew.1.gz
+          EOF
           apt-get install -y ./dist/blind-pew_0.1.0-2_all.deb
       - name: Xfce and real GTK3/GTK4 typing
         run: timeout 180s dbus-run-session -- xvfb-run -a -s '-screen 0 1280x960x24 -nolisten tcp' bash tests/run_installed_desktop.sh xfce

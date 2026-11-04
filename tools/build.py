@@ -58,6 +58,14 @@ def component_xml():
     return ET.tostring(component, encoding='utf-8', xml_declaration=True)
 
 
+def compressed(data):
+    # GzipFile writes a portable OS header, unlike older gzip.compress().
+    buffer = io.BytesIO()
+    with gzip.GzipFile(filename='', fileobj=buffer, mode='wb', mtime=0) as handle:
+        handle.write(data)
+    return buffer.getvalue()
+
+
 def stage(dest):
     install_translations(dest)
     share = dest / 'usr/share/blind-pew'
@@ -90,26 +98,21 @@ def stage(dest):
         (doc / name).write_text(''.join(line for line in content.splitlines(keepends=True)
                                       if '](downloads/' not in line), encoding='utf-8')
     for name in ('TESTING.md', 'REFERENCE.md', 'RELEASE.md', 'LEGAL_REVIEW.md', 'COMPARISON.md'):
-        shutil.copyfile(ROOT / 'docs' / name, doc / 'docs' / name)
+        content = (ROOT / 'docs' / name).read_text(encoding='utf-8')
+        (doc / 'docs' / name).write_text(content.replace('../CHANGELOG.md', '../changelog.gz'),
+                                        encoding='utf-8')
     shutil.copytree(ROOT / 'docs/screenshots', doc / 'docs/screenshots')
     shutil.copyfile(ROOT / 'SECURITY.md', doc / 'SECURITY.md')
-    shutil.copyfile(ROOT / 'CHANGELOG.md', doc / 'CHANGELOG.md')
     shutil.copyfile(ROOT / 'THIRD_PARTY_NOTICES.md', doc / 'THIRD_PARTY_NOTICES.md')
     shutil.copytree(ROOT / 'LICENSES', doc / 'LICENSES')
     shutil.copyfile(ROOT / 'LICENSE', doc / 'copyright')
     (doc / 'data').symlink_to('../../blind-pew/data')
     (doc / 'docs/blind-pew-logo.png').symlink_to('../../../blind-pew/docs/blind-pew-logo.png')
-    # gzip.compress(mtime=0) used different OS headers across Python versions.
-    buffer = io.BytesIO()
-    with gzip.GzipFile(filename='', fileobj=buffer, mode='wb', mtime=0) as handle:
-        handle.write(CHANGELOG.encode('utf-8'))
-    (doc / 'changelog.Debian.gz').write_bytes(buffer.getvalue())
+    (doc / 'changelog.Debian.gz').write_bytes(compressed(CHANGELOG.encode('utf-8')))
+    (doc / 'changelog.gz').write_bytes(compressed((ROOT / 'CHANGELOG.md').read_bytes()))
     manual = dest / 'usr/share/man/man1'
     manual.mkdir(parents=True)
-    buffer = io.BytesIO()
-    with gzip.GzipFile(filename='', fileobj=buffer, mode='wb', mtime=0) as handle:
-        handle.write((ROOT / 'docs/blind-pew.1').read_bytes())
-    (manual / 'blind-pew.1.gz').write_bytes(buffer.getvalue())
+    (manual / 'blind-pew.1.gz').write_bytes(compressed((ROOT / 'docs/blind-pew.1').read_bytes()))
 
 
 def build():

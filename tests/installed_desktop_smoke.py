@@ -16,6 +16,7 @@ config.update(ui_language='en', favorite_profile='ua', favorite_base='us')
 faulthandler.dump_traceback_later(20, repeat=True)
 app = Application()
 failures = []
+shared_buses = []
 started = time.monotonic()
 
 
@@ -75,6 +76,7 @@ def exercise():
         print('PASS real desktop, installed app, panel, switching, wheel callbacks, About and live language', flush=True)
         if not integration.is_gnome():
             print('PASS physical F12 event through Xfce settings daemon', flush=True)
+        shared_buses.append(app.monitor.bus)
         app.quit()
     except Exception:
         failures.append(traceback.format_exc())
@@ -87,6 +89,7 @@ GLib.timeout_add(300, exercise)
 status = app.run(['blind-pew'])
 faulthandler.cancel_dump_traceback_later()
 assert not failures, failures
+assert shared_buses[0].is_connected(), 'Stopping the monitor closed the shared GTK/IBus connection'
 assert not config.load()['hotkey_backup'], 'Shortcut backups not restored on quit'
 assert not config.load()['session_backup'], 'Session backups not restored on quit'
 if not integration.is_gnome():

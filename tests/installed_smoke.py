@@ -23,7 +23,7 @@ assert {node.findtext('name') for node in component.find('engines')} == {name fo
 for language, _ in i18n.LANGUAGES:
     translator = i18n.translator(language)
     assert translator.gettext('Transliteration')
-    assert Path('/usr/share/locale', language, 'LC_MESSAGES/blind-pew.mo').is_file()
+    assert Path('/usr/share/locale', language, 'LC_MESSAGES/blind-pew.mo').is_file(), language
 metadata = json.loads(Path('/usr/share/gnome-shell/extensions/blind-pew@local/metadata.json').read_text())
 assert metadata['shell-version'] == ['46', '47', '48']
 for path in ('LICENSE', 'copyright', 'docs/screenshots/gnome-settings-en.png',

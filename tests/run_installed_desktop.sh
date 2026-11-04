@@ -99,7 +99,7 @@ if [ "$1" = xfce ]; then
     gsettings set org.freedesktop.ibus.general use-global-engine true
     /usr/bin/python3 tests/installed_gtk_input.py 3.0
     kill -0 "$ibus_pid"
-    GDK_DEBUG=gl-disable,vulkan-disable timeout --preserve-status --signal=INT --kill-after=5s 15s \
+    timeout --preserve-status --signal=INT --kill-after=5s 15s \
         gdb --batch --return-child-result -ex 'set pagination off' -ex run \
         -ex 'thread apply all bt 15' --args /usr/bin/python3 tests/installed_gtk_input.py 4.0
 fi
