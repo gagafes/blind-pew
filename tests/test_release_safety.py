@@ -4,6 +4,7 @@
 import io
 import json
 import os
+import subprocess
 from pathlib import Path
 import tempfile
 import unittest
@@ -66,6 +67,24 @@ class Preferences(unittest.TestCase):
 
 
 class FreshXfce(unittest.TestCase):
+    def test_empty_channel_list_exit_status(self):
+        result = subprocess.CompletedProcess([], 1, 'Channels:\n', '')
+        with patch.object(subprocess, 'run', return_value=result) as run:
+            self.assertIsNone(hotkey._xfget(hotkey.XFCE_KEY))
+        self.assertEqual(run.call_args.kwargs['env']['LC_ALL'], 'C')
+
+    def test_channel_list_errors_remain_errors(self):
+        for output, error in (('', ''), ('Channels:\n', 'Connection lost')):
+            result = subprocess.CompletedProcess([], 1, output, error)
+            with patch.object(subprocess, 'run', return_value=result):
+                with self.assertRaises(RuntimeError):
+                    hotkey._xfget(hotkey.XFCE_KEY)
+
+    def test_saved_shortcut_preserves_trailing_newline(self):
+        result = subprocess.CompletedProcess([], 0, 'command\n\n', '')
+        with patch.object(subprocess, 'run', return_value=result):
+            self.assertEqual(hotkey._xfquery('-p', hotkey.XFCE_KEY), 'command\n')
+
     def test_absent_channel_has_no_saved_binding(self):
         with patch.object(hotkey, '_xfquery', return_value='Channels:') as query:
             self.assertIsNone(hotkey._xfget(hotkey.XFCE_KEY))

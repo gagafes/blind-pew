@@ -3,6 +3,7 @@
 # Copyright (c) 2026 Andrey Popovich
 set -euo pipefail
 # Run inside a disposable session bus; the caller supplies Xvfb for Xfce.
+: "${BLIND_PEW_DISPOSABLE_SESSION:?Run only in a disposable OS user/container; startup calls im-config}"
 mkdir -p desktop-output
 export XDG_RUNTIME_DIR
 XDG_RUNTIME_DIR=$(mktemp -d /tmp/blind-pew-desktop-XXXXXXXX)
@@ -14,7 +15,8 @@ export GTK_IM_MODULE=ibus XMODIFIERS=@im=ibus
 export PYTHONPATH=/usr/share/blind-pew
 export LIBGL_ALWAYS_SOFTWARE=1
 export GSK_RENDERER=cairo GTK_A11Y=none NO_AT_BRIDGE=1
-unset GSETTINGS_BACKEND IBUS_ADDRESS
+unset GSETTINGS_BACKEND IBUS_USE_PORTAL
+export IBUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/ibus"
 pids=()
 cleanup() {
     for pid in "${pids[@]}"; do kill "$pid" 2>/dev/null || true; done
@@ -31,7 +33,7 @@ else
 fi
 dbus-update-activation-environment XDG_RUNTIME_DIR XDG_CONFIG_HOME XDG_CACHE_HOME \
     XDG_CURRENT_DESKTOP XDG_SESSION_TYPE GDK_BACKEND LANG LANGUAGE LC_ALL \
-    GTK_IM_MODULE XMODIFIERS
+    GTK_IM_MODULE XMODIFIERS IBUS_ADDRESS
 if [ "$1" = gnome ]; then
     dbus-update-activation-environment WAYLAND_DISPLAY
     gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us')]"
@@ -51,7 +53,6 @@ if [ "$1" = gnome ]; then
         kill -0 "${pids[0]}"
         sleep 1
     done
-    ibus-daemon --daemonize --panel disable --config disable --cache refresh
 else
     dbus-update-activation-environment DISPLAY XAUTHORITY
     mkdir -p "$XDG_CONFIG_HOME/xfce4/xfconf/xfce-perchannel-xml"
@@ -75,11 +76,22 @@ XML
     pids+=("$!")
     xfce4-panel --disable-wm-check > desktop-output/xfce4-panel.log 2>&1 &
     pids+=("$!")
-    ibus-daemon --daemonize --xim --panel disable --config disable --cache refresh
 fi
+ibus-daemon --address="$IBUS_ADDRESS" --panel disable --config disable --cache refresh \
+    > "desktop-output/ibus-$1.log" 2>&1 &
+ibus_pid=$!
+pids+=("$ibus_pid")
+for attempt in $(seq 1 40); do
+    kill -0 "$ibus_pid"
+    if ibus list-engine >/dev/null 2>&1; then break; fi
+    sleep 0.25
+done
+ibus list-engine >/dev/null
 /usr/bin/python3 tests/installed_desktop_smoke.py
+kill -0 "$ibus_pid"
 if [ "$1" = xfce ]; then
     gsettings set org.freedesktop.ibus.general use-global-engine true
     /usr/bin/python3 tests/installed_gtk_input.py 3.0
+    kill -0 "$ibus_pid"
     /usr/bin/python3 tests/installed_gtk_input.py 4.0
 fi

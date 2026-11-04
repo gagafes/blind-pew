@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Andrey Popovich
 """Send real X11 key events through installed GTK3/GTK4 and IBus modules."""
+import faulthandler
 import subprocess
 import sys
 import time
@@ -11,9 +12,13 @@ gi.require_version('Gtk', sys.argv[1])
 gi.require_version('IBus', '1.0')
 from gi.repository import GLib, Gtk, IBus
 
+faulthandler.dump_traceback_later(15, repeat=True)
+print('START GTK', sys.argv[1], flush=True)
 Gtk.init()
 IBus.init()
+print('GTK initialized', sys.argv[1], flush=True)
 window = Gtk.Window(title='Blind Pew installed typing test')
+window.set_default_size(600, 100)
 entry = Gtk.Entry()
 entry.set_property('im-module', 'ibus')
 if sys.argv[1] == '3.0':
@@ -23,13 +28,15 @@ else:
     window.set_child(entry)
 window.present()
 entry.grab_focus()
+print('GTK window presented', sys.argv[1], flush=True)
 bus = IBus.Bus.new()
+assert bus.is_connected(), 'Installed test cannot connect to its private IBus daemon'
 
 
 def pump(seconds=0.25):
     end = time.monotonic() + seconds
     while time.monotonic() < end:
-        while GLib.MainContext.default().pending():
+        while GLib.MainContext.default().pending() and time.monotonic() < end:
             GLib.MainContext.default().iteration(False)
         time.sleep(0.005)
 
@@ -65,3 +72,4 @@ pump()
 assert entry.get_text() == 'secret', 'Password text was transliterated'
 print('PASS GTK', sys.argv[1], 'password field bypass', flush=True)
 window.destroy()
+faulthandler.cancel_dump_traceback_later()

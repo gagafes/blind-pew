@@ -161,7 +161,7 @@ def exercise():
         app.window.mode.set_active_id('il')
         print('PASS transliteration previews; Hebrew RTL/table; preserve user-entered text')
         assert app.window.hint.get_text() == 'F12 — ' + i18n.tr('Toggle transliteration')
-        assert Gio.Settings.new('org.freedesktop.ibus.general.hotkey').get_strv('triggers') == []
+        assert Gio.Settings.new('org.freedesktop.ibus.general.hotkey').get_strv('triggers') == [], app.window.status.get_text()
         assert hotkey._xfget(hotkey.XFCE_KEY) == hotkey.COMMAND
         assert Gio.Settings.new('org.freedesktop.ibus.general').get_boolean('use-global-engine')
         assert len(app.window.mode.get_model()) == 8  # 7 languages + Russian DE rules

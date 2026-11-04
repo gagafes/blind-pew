@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Andrey Popovich
 """One desktop shortcut: F12 invokes the running application's toggle action."""
+import os
 import re
 import subprocess
 from . import config, integration
@@ -47,8 +48,12 @@ def _custom(path):
     from gi.repository import Gio
     if not valid_custom_path(path):
         raise ValueError('Invalid GNOME shortcut path')
-    integration._settings(GNOME_SCHEMA)  # check schema availability before constructing
-    return Gio.Settings.new_with_path(GNOME_SCHEMA + '.custom-keybinding', path)
+    source = Gio.SettingsSchemaSource.get_default()
+    schema_id = GNOME_SCHEMA + '.custom-keybinding'
+    schema = source.lookup(schema_id, True) if source else None
+    if schema is None:
+        raise RuntimeError(tr('Settings unavailable') + ': ' + schema_id)
+    return Gio.Settings.new_full(schema, None, path)
 
 
 def _xfquery(*args, channel=True):
@@ -57,12 +62,17 @@ def _xfquery(*args, channel=True):
         command += ['-c', 'xfce4-keyboard-shortcuts']
     try:
         result = subprocess.run([*command, *args],
-                                capture_output=True, text=True, timeout=3)
+                                capture_output=True, text=True, timeout=3,
+                                env={**os.environ, 'LC_ALL': 'C', 'LANGUAGE': 'C'})
     except (OSError, subprocess.TimeoutExpired) as error:
         raise RuntimeError(tr('Settings unavailable') + ': ' + str(error)) from error
-    if result.returncode:
+    # xfconf-query returns 1 even for a successful list of zero channels.
+    # Match that exact response, keeping real D-Bus failures as errors.
+    empty_channels = (not channel and args == ('-l',) and result.returncode == 1
+                      and result.stdout.strip() == 'Channels:' and not result.stderr)
+    if result.returncode and not empty_channels:
         raise RuntimeError(tr('Settings unavailable') + ': ' + result.stderr.strip()[:240])
-    return result.stdout.rstrip('\n')
+    return result.stdout.removesuffix('\n')
 
 
 def _xfget(key):

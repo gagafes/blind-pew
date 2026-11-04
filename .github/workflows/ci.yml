@@ -109,6 +109,7 @@ jobs:
     env:
       DEBIAN_FRONTEND: noninteractive
       LANG: C.UTF-8
+      BLIND_PEW_DISPOSABLE_SESSION: '1'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -124,6 +125,7 @@ jobs:
       - name: Xfce and real GTK3/GTK4 typing
         run: timeout 180s dbus-run-session -- xvfb-run -a -s '-screen 0 1280x960x24 -nolisten tcp' bash tests/run_installed_desktop.sh xfce
       - name: GNOME Wayland integration
+        if: ${{ !cancelled() }}
         run: timeout 180s dbus-run-session -- bash tests/run_installed_desktop.sh gnome
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: always()
