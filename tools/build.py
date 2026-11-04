@@ -78,6 +78,8 @@ def stage(dest):
         ('assets/blind-pew.desktop', 'usr/share/applications/blind-pew.desktop'),
         ('assets/blind-pew.svg', 'usr/share/icons/hicolor/scalable/apps/blind-pew.svg'),
         ('docs/blind-pew-logo.png', 'usr/share/blind-pew/docs/blind-pew-logo.png'),
+        ('docs/marketing/transliteration-demo.gif',
+         'usr/share/doc/blind-pew/docs/marketing/transliteration-demo.gif'),
         ('LICENSE', 'usr/share/doc/blind-pew/LICENSE'),
         ('assets/gnome-extension/LICENSE', 'usr/share/gnome-shell/extensions/blind-pew@local/LICENSE'),
         ('assets/gnome-extension/metadata.json', 'usr/share/gnome-shell/extensions/blind-pew@local/metadata.json'),
