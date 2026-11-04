@@ -123,7 +123,7 @@ def build():
             'Section: utils\nPriority: optional\n'
             f'Installed-Size: {size}\n'
             'Depends: python3 (>= 3.10), python3-gi, gir1.2-ibus-1.0, gir1.2-gtk-3.0, '
-            'ibus (>= 1.5.29), ibus-gtk3, ibus-gtk4, im-config, xfconf, gir1.2-ayatanaappindicator3-0.1\n'
+            'ibus (>= 1.5.29), ibus-gtk3, ibus-gtk4, im-config, xfconf, libxfconf-0-3, gir1.2-ayatanaappindicator3-0.1\n'
             'Suggests: gnome-shell-extension-appindicator\n'
             'Description: Blind Pew keyboard switcher and offline transliteration\n'
             ' Independent IBus engine implementing functional input tables of\n'

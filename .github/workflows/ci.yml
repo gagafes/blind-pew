@@ -33,7 +33,7 @@ jobs:
       - name: Install test dependencies
         run: |
           apt-get update
-          apt-get install -y --no-install-recommends python3 python3-gi libglib2.0-bin gsettings-desktop-schemas gir1.2-ibus-1.0 gir1.2-gtk-3.0 gir1.2-gtk-4.0 gir1.2-ayatanaappindicator3-0.1 ibus ibus-gtk3 ibus-gtk4 im-config xfconf xvfb xauth dbus-x11 desktop-file-utils nodejs lintian
+          apt-get install -y --no-install-recommends python3 python3-gi libglib2.0-bin gsettings-desktop-schemas gir1.2-ibus-1.0 gir1.2-gtk-3.0 gir1.2-gtk-4.0 gir1.2-ayatanaappindicator3-0.1 ibus ibus-gtk3 ibus-gtk4 im-config xfconf libxfconf-0-3 xvfb xauth dbus-x11 desktop-file-utils nodejs lintian
       - name: Unit, protocol and GUI regressions
         run: |
           /usr/bin/python3 -m unittest discover -s tests -v
@@ -120,6 +120,9 @@ jobs:
           apt-get install -y --no-install-recommends python3 gnome-shell gnome-settings-daemon gnome-shell-extension-appindicator gsettings-desktop-schemas gjs dbus-x11 fonts-cantarell fonts-noto-core libgl1-mesa-dri xfwm4 xfce4-panel xfce4-settings xdotool xvfb xauth gir1.2-gtk-4.0
           mkdir -p /run/dbus
           dbus-daemon --system --fork --nopidfile
+          # APT creates this marker even though the container has no logind.
+          # Let GNOME use its built-in non-systemd login manager here.
+          if test -d /run/systemd/seats; then rmdir /run/systemd/seats; fi
           /usr/bin/python3 tools/build.py
           apt-get install -y ./dist/blind-pew_0.1.0-2_all.deb
       - name: Xfce and real GTK3/GTK4 typing

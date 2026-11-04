@@ -8,7 +8,7 @@
 
 **0.1.0 · Debian 13 · Ubuntu 24.04 · XFCE / GNOME · MIT**
 
-**[DEB 0.1.0-1 für Debian / Ubuntu herunterladen](downloads/blind-pew_0.1.0-1_all.deb?raw=true)**  
+**[DEB 0.1.0-2 für Debian / Ubuntu herunterladen](downloads/blind-pew_0.1.0-2_all.deb?raw=true)**  
 [SHA-256-Prüfsumme](downloads/SHA256SUMS)
 
 Ein kleines Programm zur Offline-Transliteration. Sprache auswählen und
@@ -51,7 +51,7 @@ siehe [Angaben zu den Referenzen](docs/REFERENCE.md).
 DEB herunterladen, ein Terminal im Downloadordner öffnen und ausführen:
 
 ~~~sh
-sudo apt install ./blind-pew_0.1.0-1_all.deb
+sudo apt install ./blind-pew_0.1.0-2_all.deb
 ~~~
 
 Von der grafischen Sitzung abmelden und erneut anmelden. **Blind Pew**
@@ -111,7 +111,7 @@ das Blind-Pew-Logo und die Kontaktdaten des Autors.
 ## Abhängigkeiten
 
 `python3 (>= 3.10)`, `python3-gi`, `gir1.2-ibus-1.0`, `gir1.2-gtk-3.0`,
-`ibus (>= 1.5.29)`, `ibus-gtk3`, `ibus-gtk4`, `im-config`, `xfconf`,
+`ibus (>= 1.5.29)`, `ibus-gtk3`, `ibus-gtk4`, `im-config`, `xfconf`, `libxfconf-0-3`,
 `gir1.2-ayatanaappindicator3-0.1`.
 
 APT installiert die benötigten Systempakete; sie sind nicht im DEB enthalten.
@@ -153,14 +153,14 @@ python3 -m unittest discover -s tests -v
 python3 tools/build.py
 ~~~
 
-Das Paket wird in `dist/` erzeugt. GitHub Actions führt die Tests unter
-Ubuntu 24.04 aus und stellt das DEB als Build-Artefakt bereit.
-[Testanleitung und Prüfumfang auf Englisch](docs/TESTING.md).
+Das Paket wird in `dist/` erzeugt. GitHub Actions testet Ubuntu 24.04 und
+Debian 13: Paketinstallation, XFCE, GTK3/GTK4-Texteingabe und eine
+GNOME-/Wayland-Sitzung mit virtuellem Bildschirm. DEBs und Protokolle
+werden als Build-Artefakte gespeichert. [Prüfumfang und Anleitung](docs/TESTING.md).
 
 Der Autor hat den Betrieb auf **Debian 13 mit XFCE 4.20** bestätigt.
-Vollständige GNOME-/Wayland-Sitzungen sowie die durchgängige Texteingabe in
-GTK4-, Qt-, Electron- und isolierten Anwendungen müssen noch am Desktop
-geprüft werden. Die Übersetzungskataloge werden automatisch geprüft;
+Qt, Electron, isolierte Anwendungen sowie physische Tastaturen und Mäuse
+benötigen weitere Tests. Die Übersetzungskataloge werden automatisch geprüft;
 eine muttersprachliche Prüfung aller 49 Sprachen steht aus.
 
 ## Autor und Lizenz

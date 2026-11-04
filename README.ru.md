@@ -8,7 +8,7 @@
 
 **0.1.0 · Debian 13 · Ubuntu 24.04 · XFCE / GNOME · MIT**
 
-**[Скачать DEB 0.1.0-1 для Debian / Ubuntu](downloads/blind-pew_0.1.0-1_all.deb?raw=true)**  
+**[Скачать DEB 0.1.0-2 для Debian / Ubuntu](downloads/blind-pew_0.1.0-2_all.deb?raw=true)**  
 [Контрольная сумма SHA-256](downloads/SHA256SUMS)
 
 Небольшой офлайн-переключатель транслита. Выберите язык и включайте или
@@ -50,7 +50,7 @@ GNOME 46 / Wayland в Ubuntu 24.04; интерфейс программы — а
 Скачайте DEB, откройте терминал в папке с пакетом и выполните:
 
 ~~~sh
-sudo apt install ./blind-pew_0.1.0-1_all.deb
+sudo apt install ./blind-pew_0.1.0-2_all.deb
 ~~~
 
 Выйдите и снова войдите в графический сеанс. Откройте **Blind Pew** через
@@ -106,7 +106,7 @@ gnome-extensions enable blind-pew@local
 ## Зависимости
 
 `python3 (>= 3.10)`, `python3-gi`, `gir1.2-ibus-1.0`, `gir1.2-gtk-3.0`,
-`ibus (>= 1.5.29)`, `ibus-gtk3`, `ibus-gtk4`, `im-config`, `xfconf`,
+`ibus (>= 1.5.29)`, `ibus-gtk3`, `ibus-gtk4`, `im-config`, `xfconf`, `libxfconf-0-3`,
 `gir1.2-ayatanaappindicator3-0.1`.
 
 APT установит необходимые системные пакеты; в DEB они не включены.
@@ -147,15 +147,15 @@ python3 -m unittest discover -s tests -v
 python3 tools/build.py
 ~~~
 
-Пакет появится в `dist/`. GitHub Actions запускает тесты на Ubuntu 24.04
-и сохраняет DEB в артефактах сборки.
-[Команды и границы проверки, на английском](docs/TESTING.md).
+Пакет появится в `dist/`. GitHub Actions проверяет Ubuntu 24.04 и Debian 13:
+установку пакета, XFCE, ввод через GTK3/GTK4 и GNOME/Wayland с виртуальным
+экраном. DEB и журналы сохраняются в артефактах сборки.
+[Команды, границы автоматических и ручных проверок](docs/TESTING.md).
 
-Автор подтвердил работу на **Debian 13 с XFCE 4.20**.
-Полный сеанс GNOME/Wayland и сквозной ввод в GTK4, Qt, Electron
-и изолированных приложениях ещё требуют проверки на компьютере.
-Каталоги переводов проходят автоматические проверки; вычитка носителями
-всех 49 языков не проводилась.
+Автор подтвердил работу на **Debian 13 с XFCE 4.20**. Qt, Electron,
+изолированные приложения, физические клавиатуры и мыши требуют дальнейшей
+проверки. Каталоги переводов проходят автоматические проверки; вычитка
+носителями всех 49 языков не проводилась.
 
 ## Автор и лицензия
 

@@ -8,7 +8,7 @@
 
 **0.1.0 · Debian 13 · Ubuntu 24.04 · XFCE / GNOME · MIT**
 
-**[Спампаваць DEB 0.1.0-1 для Debian / Ubuntu](downloads/blind-pew_0.1.0-1_all.deb?raw=true)**
+**[Спампаваць DEB 0.1.0-2 для Debian / Ubuntu](downloads/blind-pew_0.1.0-2_all.deb?raw=true)**
 [Кантрольная сума SHA-256](downloads/SHA256SUMS)
 
 Невялікі аўтаномны пераключальнік транслітарацыі. Выберыце мову і ўключайце
@@ -50,7 +50,7 @@ GNOME 46 / Wayland у Ubuntu 24.04; інтэрфейс праграмы — па
 Спампуйце DEB, адкрыйце тэрмінал у каталогу з пакетам і выканайце:
 
 ~~~sh
-sudo apt install ./blind-pew_0.1.0-1_all.deb
+sudo apt install ./blind-pew_0.1.0-2_all.deb
 ~~~
 
 Выйдзіце з графічнага сеанса і ўвайдзіце зноў. Адкрыйце **Blind Pew** праз
@@ -101,7 +101,7 @@ gnome-extensions enable blind-pew@local
 ## Залежнасці
 
 `python3 (>= 3.10)`, `python3-gi`, `gir1.2-ibus-1.0`, `gir1.2-gtk-3.0`,
-`ibus (>= 1.5.29)`, `ibus-gtk3`, `ibus-gtk4`, `im-config`, `xfconf`,
+`ibus (>= 1.5.29)`, `ibus-gtk3`, `ibus-gtk4`, `im-config`, `xfconf`, `libxfconf-0-3`,
 `gir1.2-ayatanaappindicator3-0.1`.
 
 APT усталюе патрэбныя сістэмныя пакеты; яны не ўключаныя ў DEB.
@@ -140,13 +140,14 @@ python3 -m unittest discover -s tests -v
 python3 tools/build.py
 ~~~
 
-Пакет ствараецца ў `dist/`. Workflow GitHub Actions прызначаны для тэстаў
-на Ubuntu 24.04 і захавання DEB як артэфакта зборкі.
-[Інструкцыі і межы праверкі](docs/TESTING.md).
+Пакет ствараецца ў `dist/`. GitHub Actions правярае Ubuntu 24.04 і Debian 13:
+усталяванне пакета, XFCE, увод праз GTK3/GTK4 і GNOME/Wayland з віртуальным
+экранам. DEB і журналы захоўваюцца як артэфакты зборкі.
+[Інструкцыі, межы аўтаматычных і ручных праверак](docs/TESTING.md).
 
-Аўтар пацвердзіў працу на **Debian 13 з XFCE 4.20**. Поўны сеанс GNOME/Wayland
-і ўвод у GTK4, Qt, Electron і ізаляваных праграмах яшчэ патрабуюць праверкі
-на камп'ютары. Каталогі перакладаў маюць аўтаматычныя праверкі;
+Аўтар пацвердзіў працу на **Debian 13 з XFCE 4.20**. Qt, Electron,
+ізаляваныя праграмы, фізічныя клавіятуры і мышы патрабуюць далейшай праверкі.
+Каталогі перакладаў маюць аўтаматычныя праверкі;
 усе 49 моў не праходзілі вычытку носьбітамі.
 
 ## Аўтар і ліцэнзія

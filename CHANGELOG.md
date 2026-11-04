@@ -10,6 +10,8 @@ can upgrade normally.
   JSON and malformed shortcut backups without breaking startup.
 - Persist original desktop settings before replacing them, so interrupted
   activation retains recovery information. Preserve independent user changes.
+- Handle empty Xfce shortcut profiles and missing GNOME shortcut schemas.
+- Require the Xfconf client library even when APT recommendations are disabled.
 - Publish generated tray icons atomically without following cache symlinks.
 - Convert large CLI input in bounded chunks, including text without newlines.
 - Include screenshots and release/security documentation in the DEB.

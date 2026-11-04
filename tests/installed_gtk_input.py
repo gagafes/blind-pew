@@ -30,7 +30,6 @@ window.present()
 entry.grab_focus()
 print('GTK window presented', sys.argv[1], flush=True)
 bus = IBus.Bus.new()
-assert bus.is_connected(), 'Installed test cannot connect to its private IBus daemon'
 
 
 def pump(seconds=0.25):
@@ -42,6 +41,7 @@ def pump(seconds=0.25):
 
 
 pump(1)
+assert bus.is_connected(), 'Installed test cannot connect to its private IBus daemon'
 subprocess.run(['xdotool', 'search', '--name', '^Blind Pew installed typing test$',
                 'windowactivate', '--sync'], check=True, timeout=5)
 pump()

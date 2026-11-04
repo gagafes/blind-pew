@@ -8,7 +8,7 @@
 
 **0.1.0 · Debian 13 · Ubuntu 24.04 · XFCE / GNOME · MIT**
 
-**[Завантажити DEB 0.1.0-1 для Debian / Ubuntu](downloads/blind-pew_0.1.0-1_all.deb?raw=true)**  
+**[Завантажити DEB 0.1.0-2 для Debian / Ubuntu](downloads/blind-pew_0.1.0-2_all.deb?raw=true)**  
 [Контрольна сума SHA-256](downloads/SHA256SUMS)
 
 Невеликий офлайн-перемикач трансліту. Виберіть мову та вмикайте або
@@ -50,7 +50,7 @@ GNOME 46 / Wayland в Ubuntu 24.04; мова інтерфейсу програм
 Завантажте DEB, відкрийте термінал у теці з пакунком і виконайте:
 
 ~~~sh
-sudo apt install ./blind-pew_0.1.0-1_all.deb
+sudo apt install ./blind-pew_0.1.0-2_all.deb
 ~~~
 
 Вийдіть із графічного сеансу та увійдіть знову. Відкрийте **Blind Pew**
@@ -106,7 +106,7 @@ gnome-extensions enable blind-pew@local
 ## Залежності
 
 `python3 (>= 3.10)`, `python3-gi`, `gir1.2-ibus-1.0`, `gir1.2-gtk-3.0`,
-`ibus (>= 1.5.29)`, `ibus-gtk3`, `ibus-gtk4`, `im-config`, `xfconf`,
+`ibus (>= 1.5.29)`, `ibus-gtk3`, `ibus-gtk4`, `im-config`, `xfconf`, `libxfconf-0-3`,
 `gir1.2-ayatanaappindicator3-0.1`.
 
 APT встановить потрібні системні пакунки; до DEB вони не включені.
@@ -147,15 +147,15 @@ python3 -m unittest discover -s tests -v
 python3 tools/build.py
 ~~~
 
-Пакунок з'явиться в `dist/`. GitHub Actions запускає тести на Ubuntu 24.04
-та зберігає DEB в артефактах збирання.
-[Команди й межі перевірки, англійською](docs/TESTING.md).
+Пакунок з'явиться в `dist/`. GitHub Actions перевіряє Ubuntu 24.04 і Debian 13:
+встановлення пакунка, XFCE, введення через GTK3/GTK4 та GNOME/Wayland
+із віртуальним екраном. DEB і журнали зберігаються в артефактах збирання.
+[Команди, межі автоматичних і ручних перевірок](docs/TESTING.md).
 
-Автор підтвердив роботу на **Debian 13 із XFCE 4.20**.
-Повний сеанс GNOME/Wayland і наскрізне введення в GTK4, Qt, Electron
-та ізольованих застосунках ще потребують перевірки на комп'ютері.
-Каталоги перекладів проходять автоматичні перевірки; вичитування носіями
-всіх 49 мов не проводилося.
+Автор підтвердив роботу на **Debian 13 із XFCE 4.20**. Qt, Electron,
+ізольовані застосунки, фізичні клавіатури й миші потребують подальшої
+перевірки. Каталоги перекладів проходять автоматичні перевірки; вичитування
+носіями всіх 49 мов не проводилося.
 
 ## Автор і ліцензія
 

@@ -8,7 +8,7 @@
 
 **0.1.0 · Debian 13 · Ubuntu 24.04 · XFCE / GNOME · MIT**
 
-**[Download DEB 0.1.0-1 for Debian / Ubuntu](downloads/blind-pew_0.1.0-1_all.deb?raw=true)**  
+**[Download DEB 0.1.0-2 for Debian / Ubuntu](downloads/blind-pew_0.1.0-2_all.deb?raw=true)**  
 [SHA-256 checksum](downloads/SHA256SUMS)
 
 A small offline transliteration switcher. Choose a language and use **F12**
@@ -49,7 +49,7 @@ Blind Pew is an independent project; see [reference information](docs/REFERENCE.
 Download the DEB, open a terminal in its folder and run:
 
 ~~~sh
-sudo apt install ./blind-pew_0.1.0-1_all.deb
+sudo apt install ./blind-pew_0.1.0-2_all.deb
 ~~~
 
 Log out and back into your desktop session, then open **Blind Pew**
@@ -107,7 +107,7 @@ Blind Pew logo and author contact.
 ## Dependencies
 
 `python3 (>= 3.10)`, `python3-gi`, `gir1.2-ibus-1.0`, `gir1.2-gtk-3.0`,
-`ibus (>= 1.5.29)`, `ibus-gtk3`, `ibus-gtk4`, `im-config`, `xfconf`,
+`ibus (>= 1.5.29)`, `ibus-gtk3`, `ibus-gtk4`, `im-config`, `xfconf`, `libxfconf-0-3`,
 `gir1.2-ayatanaappindicator3-0.1`.
 
 APT installs these system packages as needed; they are not bundled into the
@@ -148,13 +148,15 @@ python3 -m unittest discover -s tests -v
 python3 tools/build.py
 ~~~
 
-The package is created in `dist/`. GitHub Actions runs tests on Ubuntu 24.04
-and stores the DEB as a build artifact. [Test instructions and scope](docs/TESTING.md).
+The package is created in `dist/`. GitHub Actions tests Ubuntu 24.04 and
+Debian 13, including installed packages, Xfce, GTK3/GTK4 input and a headless
+GNOME/Wayland session. It stores DEBs and test logs as build artifacts.
+[Test instructions, CI scope and remaining manual checks](docs/TESTING.md).
 
 The author has confirmed operation on **Debian 13 with XFCE 4.20**.
-Full GNOME/Wayland sessions and end-to-end typing across GTK4, Qt, Electron
-and sandboxed applications still need desktop testing. Translation catalogs
-have automated checks; all 49 languages have not been reviewed by native speakers.
+Qt, Electron, sandboxed applications and physical keyboard/mouse behavior
+need further desktop testing. Translation catalogs have automated checks;
+all 49 languages have not been reviewed by native speakers.
 
 ## Author and license
 
