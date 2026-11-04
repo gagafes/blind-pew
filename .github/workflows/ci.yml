@@ -19,7 +19,7 @@ jobs:
       - name: Install test dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-gi libglib2.0-bin gir1.2-ibus-1.0 gir1.2-gtk-3.0 gir1.2-gtk-4.0 gir1.2-ayatanaappindicator3-0.1 ibus ibus-gtk3 ibus-gtk4 im-config xfconf xvfb dbus-x11 desktop-file-utils
+          sudo apt-get install -y python3-gi libglib2.0-bin gsettings-desktop-schemas gir1.2-ibus-1.0 gir1.2-gtk-3.0 gir1.2-gtk-4.0 gir1.2-ayatanaappindicator3-0.1 ibus ibus-gtk3 ibus-gtk4 im-config xfconf xvfb dbus-x11 desktop-file-utils
       - name: Test
         run: |
           /usr/bin/python3 -m unittest discover -s tests -v

@@ -8,7 +8,7 @@ checks so that packages installed through APT are available.
 On Debian 13 or Ubuntu 24.04:
 
 ~~~sh
-sudo apt install python3 python3-gi libglib2.0-bin gir1.2-ibus-1.0 \
+sudo apt install python3 python3-gi libglib2.0-bin gsettings-desktop-schemas gir1.2-ibus-1.0 \
   gir1.2-gtk-3.0 gir1.2-gtk-4.0 gir1.2-ayatanaappindicator3-0.1 \
   ibus ibus-gtk3 ibus-gtk4 im-config xfconf xvfb dbus-x11 \
   desktop-file-utils nodejs dpkg
