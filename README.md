@@ -1,19 +1,29 @@
 # Blind Pew
 
+**Offline transliteration for Linux. Toggle with F12.**
+
 [Беларуская](README.be.md) · [Українська](README.uk.md) · [Deutsch](README.de.md) · [Русский](README.ru.md) · [English](README.md)
 
 <p align="center">
-  <img src="docs/blind-pew-logo.png" alt="Blїnd Pew" width="320">
+  <img src="docs/blind-pew-logo.png" alt="Blїnd Pew" width="180">
 </p>
 
 **0.1.0 · Debian 13 · Ubuntu 24.04 · XFCE / GNOME · MIT**
 
-**[Download DEB 0.1.0-2 for Debian / Ubuntu](downloads/blind-pew_0.1.0-2_all.deb?raw=true)**  
-[SHA-256 checksum](downloads/SHA256SUMS)
+**[Download DEB 0.1.0-2 for Debian / Ubuntu](https://github.com/gagafes/blind-pew/releases/download/v0.1.0-2/blind-pew_0.1.0-2_all.deb)**
+[SHA-256 checksum](https://github.com/gagafes/blind-pew/releases/download/v0.1.0-2/SHA256SUMS)
 
 A small offline transliteration switcher. Choose a language and use **F12**
 or the **mouse wheel over the tray icon** to turn transliteration on or off.
 The active source applies globally to applications connected to IBus.
+
+Seven languages · eight profiles · QWERTY / QWERTZ · works offline.
+
+[Latest release](https://github.com/gagafes/blind-pew/releases/latest) · [Install](#install-and-use) · [Report a bug](https://github.com/gagafes/blind-pew/issues)
+
+![Belarusian and Ukrainian transliteration with ordinary input between examples](https://raw.githubusercontent.com/gagafes/blind-pew/main/docs/marketing/transliteration-demo.gif)
+
+*Illustration using actual converter output; not a desktop recording. F12 and the tray wheel toggle the selected profile.*
 
 ## Screenshots
 
@@ -169,3 +179,7 @@ all 49 languages have not been reviewed by native speakers.
 ## Development attribution
 
 Developed with assistance from **OpenAI Codex**. Project concept, requirements, and direction: **Andrey Popovich**.
+
+## More from the author
+
+[Malferma Libro](https://github.com/gagafes/malferma-libro) — an offline desktop ebook reader for Debian and Ubuntu, with a local library and OPDS support.

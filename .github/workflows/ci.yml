@@ -77,10 +77,20 @@ jobs:
           dpkg --verify blind-pew
           if test -f downloads/blind-pew_0.1.0-2_all.deb; then
             (cd downloads && sha256sum --check SHA256SUMS)
-            if test '${{ matrix.image }}' = 'ubuntu:24.04'; then
-              cmp dist/blind-pew_0.1.0-2_all.deb downloads/blind-pew_0.1.0-2_all.deb
-            fi
           fi
+      - name: Check out the published release source for artifact verification
+        if: matrix.image == 'ubuntu:24.04'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: fcd66d7577e4053a6a2c1b71c2374ecd8190f940
+          path: .release-validation
+          persist-credentials: false
+      - name: Verify the distributed DEB against its published source
+        if: matrix.image == 'ubuntu:24.04'
+        run: |
+          # Main may gain documentation after publication; release bytes remain fixed.
+          /usr/bin/python3 .release-validation/tools/build.py
+          cmp .release-validation/dist/blind-pew_0.1.0-2_all.deb downloads/blind-pew_0.1.0-2_all.deb
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: blind-pew-${{ strategy.job-index }}

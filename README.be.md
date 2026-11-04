@@ -3,13 +3,13 @@
 [Беларуская](README.be.md) · [Українська](README.uk.md) · [Deutsch](README.de.md) · [Русский](README.ru.md) · [English](README.md)
 
 <p align="center">
-  <img src="docs/blind-pew-logo.png" alt="Blїnd Pew" width="320">
+  <img src="docs/blind-pew-logo.png" alt="Blїnd Pew" width="180">
 </p>
 
 **0.1.0 · Debian 13 · Ubuntu 24.04 · XFCE / GNOME · MIT**
 
-**[Спампаваць DEB 0.1.0-2 для Debian / Ubuntu](downloads/blind-pew_0.1.0-2_all.deb?raw=true)**
-[Кантрольная сума SHA-256](downloads/SHA256SUMS)
+**[Спампаваць DEB 0.1.0-2 для Debian / Ubuntu](https://github.com/gagafes/blind-pew/releases/download/v0.1.0-2/blind-pew_0.1.0-2_all.deb)**
+[Кантрольная сума SHA-256](https://github.com/gagafes/blind-pew/releases/download/v0.1.0-2/SHA256SUMS)
 
 Невялікі аўтаномны пераключальнік транслітарацыі. Выберыце мову і ўключайце
 ці выключайце транслітарацыю клавішай **F12** або **колцам мышы над значком у трэі**.

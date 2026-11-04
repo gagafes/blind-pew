@@ -3,13 +3,13 @@
 [Беларуская](README.be.md) · [Українська](README.uk.md) · [Deutsch](README.de.md) · [Русский](README.ru.md) · [English](README.md)
 
 <p align="center">
-  <img src="docs/blind-pew-logo.png" alt="Blїnd Pew" width="320">
+  <img src="docs/blind-pew-logo.png" alt="Blїnd Pew" width="180">
 </p>
 
 **0.1.0 · Debian 13 · Ubuntu 24.04 · XFCE / GNOME · MIT**
 
-**[Скачать DEB 0.1.0-2 для Debian / Ubuntu](downloads/blind-pew_0.1.0-2_all.deb?raw=true)**  
-[Контрольная сумма SHA-256](downloads/SHA256SUMS)
+**[Скачать DEB 0.1.0-2 для Debian / Ubuntu](https://github.com/gagafes/blind-pew/releases/download/v0.1.0-2/blind-pew_0.1.0-2_all.deb)**
+[Контрольная сумма SHA-256](https://github.com/gagafes/blind-pew/releases/download/v0.1.0-2/SHA256SUMS)
 
 Небольшой офлайн-переключатель транслита. Выберите язык и включайте или
 выключайте транслит клавишей **F12** или **колёсиком мыши над значком трея**.

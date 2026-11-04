@@ -3,13 +3,13 @@
 [Беларуская](README.be.md) · [Українська](README.uk.md) · [Deutsch](README.de.md) · [Русский](README.ru.md) · [English](README.md)
 
 <p align="center">
-  <img src="docs/blind-pew-logo.png" alt="Blїnd Pew" width="320">
+  <img src="docs/blind-pew-logo.png" alt="Blїnd Pew" width="180">
 </p>
 
 **0.1.0 · Debian 13 · Ubuntu 24.04 · XFCE / GNOME · MIT**
 
-**[DEB 0.1.0-2 für Debian / Ubuntu herunterladen](downloads/blind-pew_0.1.0-2_all.deb?raw=true)**  
-[SHA-256-Prüfsumme](downloads/SHA256SUMS)
+**[DEB 0.1.0-2 für Debian / Ubuntu herunterladen](https://github.com/gagafes/blind-pew/releases/download/v0.1.0-2/blind-pew_0.1.0-2_all.deb)**
+[SHA-256-Prüfsumme](https://github.com/gagafes/blind-pew/releases/download/v0.1.0-2/SHA256SUMS)
 
 Ein kleines Programm zur Offline-Transliteration. Sprache auswählen und
 die Transliteration mit **F12** oder dem **Mausrad über dem Symbol im
