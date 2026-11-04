@@ -97,7 +97,7 @@ class InputMonitor:
                 pass
         detail = tr('Current layout') + ': ' + name
         if country:
-            detail += ' (' + country + ')' 
+            detail += ' (' + country + ')'
         value = country, detail
         if value != self.last:
             self.last = value

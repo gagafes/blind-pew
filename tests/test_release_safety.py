@@ -67,33 +67,32 @@ class Preferences(unittest.TestCase):
 
 
 class FreshXfce(unittest.TestCase):
-    def test_empty_channel_list_exit_status(self):
-        result = subprocess.CompletedProcess([], 1, 'Channels:\n', '')
+    def test_missing_property_has_no_saved_binding(self):
+        message = (f'Property "{hotkey.XFCE_KEY}" does not exist on channel '
+                   '"xfce4-keyboard-shortcuts".\n')
+        result = subprocess.CompletedProcess([], 1, '', message)
         with patch.object(subprocess, 'run', return_value=result) as run:
             self.assertIsNone(hotkey._xfget(hotkey.XFCE_KEY))
         self.assertEqual(run.call_args.kwargs['env']['LC_ALL'], 'C')
 
-    def test_channel_list_errors_remain_errors(self):
-        for output, error in (('', ''), ('Channels:\n', 'Connection lost')):
-            result = subprocess.CompletedProcess([], 1, output, error)
+    def test_property_read_failures_remain_errors(self):
+        for error in ('', 'Connection lost', 'Permission denied'):
+            result = subprocess.CompletedProcess([], 1, '', error)
             with patch.object(subprocess, 'run', return_value=result):
                 with self.assertRaises(RuntimeError):
                     hotkey._xfget(hotkey.XFCE_KEY)
+
+    def test_new_property_does_not_require_channel_discovery(self):
+        result = subprocess.CompletedProcess([], 0, hotkey.COMMAND + '\n', '')
+        with patch.object(subprocess, 'run', return_value=result) as run:
+            self.assertEqual(hotkey._xfget(hotkey.XFCE_KEY), hotkey.COMMAND)
+        run.assert_called_once()
+        self.assertEqual(run.call_args.args[0][-2:], ['-p', hotkey.XFCE_KEY])
 
     def test_saved_shortcut_preserves_trailing_newline(self):
         result = subprocess.CompletedProcess([], 0, 'command\n\n', '')
         with patch.object(subprocess, 'run', return_value=result):
             self.assertEqual(hotkey._xfquery('-p', hotkey.XFCE_KEY), 'command\n')
-
-    def test_absent_channel_has_no_saved_binding(self):
-        with patch.object(hotkey, '_xfquery', return_value='Channels:') as query:
-            self.assertIsNone(hotkey._xfget(hotkey.XFCE_KEY))
-        query.assert_called_once_with('-l', channel=False)
-
-    def test_connection_failure_is_not_treated_as_missing_binding(self):
-        with patch.object(hotkey, '_xfquery', side_effect=RuntimeError('No session bus')):
-            with self.assertRaises(RuntimeError):
-                hotkey._xfget(hotkey.XFCE_KEY)
 
 
 class Streaming(unittest.TestCase):

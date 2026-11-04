@@ -14,6 +14,7 @@ export LANG=C.UTF-8 LANGUAGE=en LC_ALL=C.UTF-8
 export GTK_IM_MODULE=ibus XMODIFIERS=@im=ibus
 export PYTHONPATH=/usr/share/blind-pew
 export LIBGL_ALWAYS_SOFTWARE=1
+export LP_NUM_THREADS=2
 export GSK_RENDERER=cairo GTK_A11Y=none NO_AT_BRIDGE=1
 unset GSETTINGS_BACKEND IBUS_USE_PORTAL
 export IBUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/ibus"
@@ -34,6 +35,16 @@ fi
 dbus-update-activation-environment XDG_RUNTIME_DIR XDG_CONFIG_HOME XDG_CACHE_HOME \
     XDG_CURRENT_DESKTOP XDG_SESSION_TYPE GDK_BACKEND LANG LANGUAGE LC_ALL \
     GTK_IM_MODULE XMODIFIERS IBUS_ADDRESS
+ibus-daemon --address="$IBUS_ADDRESS" --panel disable --config disable --cache refresh \
+    > "desktop-output/ibus-$1.log" 2>&1 &
+ibus_pid=$!
+pids+=("$ibus_pid")
+for attempt in $(seq 1 40); do
+    kill -0 "$ibus_pid"
+    if ibus list-engine >/dev/null 2>&1; then break; fi
+    sleep 0.25
+done
+ibus list-engine >/dev/null
 if [ "$1" = gnome ]; then
     dbus-update-activation-environment WAYLAND_DISPLAY
     gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us')]"
@@ -46,11 +57,12 @@ if [ "$1" = gnome ]; then
     gsettings set org.gnome.desktop.interface enable-animations false
     gnome-shell --headless --wayland --no-x11 --virtual-monitor=1280x960 \
         --wayland-display="$WAYLAND_DISPLAY" > desktop-output/gnome-shell.log 2>&1 &
-    pids+=("$!")
+    shell_pid=$!
+    pids+=("$shell_pid")
     for attempt in $(seq 1 40); do
         if gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell \
             --method org.freedesktop.DBus.Peer.Ping >/dev/null 2>&1; then break; fi
-        kill -0 "${pids[0]}"
+        kill -0 "$shell_pid"
         sleep 1
     done
 else
@@ -77,21 +89,11 @@ XML
     xfce4-panel --disable-wm-check > desktop-output/xfce4-panel.log 2>&1 &
     pids+=("$!")
 fi
-ibus-daemon --address="$IBUS_ADDRESS" --panel disable --config disable --cache refresh \
-    > "desktop-output/ibus-$1.log" 2>&1 &
-ibus_pid=$!
-pids+=("$ibus_pid")
-for attempt in $(seq 1 40); do
-    kill -0 "$ibus_pid"
-    if ibus list-engine >/dev/null 2>&1; then break; fi
-    sleep 0.25
-done
-ibus list-engine >/dev/null
 /usr/bin/python3 tests/installed_desktop_smoke.py
 kill -0 "$ibus_pid"
 if [ "$1" = xfce ]; then
     gsettings set org.freedesktop.ibus.general use-global-engine true
     /usr/bin/python3 tests/installed_gtk_input.py 3.0
     kill -0 "$ibus_pid"
-    /usr/bin/python3 tests/installed_gtk_input.py 4.0
+    GDK_DEBUG=gl-disable,vulkan-disable /usr/bin/python3 tests/installed_gtk_input.py 4.0
 fi

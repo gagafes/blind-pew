@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Andrey Popovich
 """Exercise the installed app against a real desktop, panel and IBus daemon."""
+import faulthandler
 import os
 from pathlib import Path
 import subprocess
@@ -13,6 +14,7 @@ from blind_pew.setup import Application
 from gi.repository import Gdk, GLib
 
 config.update(ui_language='en', favorite_profile='ua', favorite_base='us')
+faulthandler.dump_traceback_later(20, repeat=True)
 app = Application()
 failures = []
 started = time.monotonic()
@@ -84,6 +86,7 @@ def exercise():
 
 GLib.timeout_add(300, exercise)
 status = app.run(['blind-pew'])
+faulthandler.cancel_dump_traceback_later()
 assert not failures, failures
 assert not config.load()['hotkey_backup'], 'Shortcut backups not restored on quit'
 assert not config.load()['session_backup'], 'Session backups not restored on quit'

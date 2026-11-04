@@ -16,7 +16,8 @@ with tempfile.TemporaryDirectory(prefix='blind-pew-gui-test-') as tmp:
     env = dict(os.environ, XDG_SESSION_TYPE='x11', XDG_CURRENT_DESKTOP='XFCE',
                XDG_CONFIG_HOME=str(root / 'config'), XDG_CACHE_HOME=str(root / 'cache'),
                XDG_RUNTIME_DIR=str(runtime), GSETTINGS_BACKEND='memory',
-               NO_AT_BRIDGE='1', GTK_A11Y='none', GSK_RENDERER='cairo', PYTHONPATH='.')
+               NO_AT_BRIDGE='1', GTK_A11Y='none', GSK_RENDERER='cairo',
+               LP_NUM_THREADS='2', PYTHONPATH='.')
     for key in ('DISPLAY', 'WAYLAND_DISPLAY', 'IBUS_ADDRESS', 'DBUS_SESSION_BUS_ADDRESS'):
         env.pop(key, None)
     subprocess.run(['dbus-run-session', '--', 'xvfb-run', '-a', '-s',

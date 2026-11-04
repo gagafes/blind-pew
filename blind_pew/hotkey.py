@@ -56,32 +56,28 @@ def _custom(path):
     return Gio.Settings.new_full(schema, None, path)
 
 
-def _xfquery(*args, channel=True):
-    command = ['xfconf-query']
-    if channel:
-        command += ['-c', 'xfce4-keyboard-shortcuts']
+def _xfquery(*args):
     try:
-        result = subprocess.run([*command, *args],
+        result = subprocess.run(['xfconf-query', '-c', 'xfce4-keyboard-shortcuts', *args],
                                 capture_output=True, text=True, timeout=3,
                                 env={**os.environ, 'LC_ALL': 'C', 'LANGUAGE': 'C'})
     except (OSError, subprocess.TimeoutExpired) as error:
         raise RuntimeError(tr('Settings unavailable') + ': ' + str(error)) from error
-    # xfconf-query returns 1 even for a successful list of zero channels.
-    # Match that exact response, keeping real D-Bus failures as errors.
-    empty_channels = (not channel and args == ('-l',) and result.returncode == 1
-                      and result.stdout.strip() == 'Channels:' and not result.stderr)
-    if result.returncode and not empty_channels:
+    # Query the property directly: listing channels can omit a newly created
+    # channel until xfconfd flushes it to disk. Only this exact missing-property
+    # diagnostic is harmless; connection/permission/command errors stay errors.
+    missing = (len(args) == 2 and args[0] == '-p' and result.returncode == 1
+               and not result.stdout and result.stderr.strip() ==
+               f'Property "{args[1]}" does not exist on channel "xfce4-keyboard-shortcuts".')
+    if missing:
+        return None
+    if result.returncode:
         raise RuntimeError(tr('Settings unavailable') + ': ' + result.stderr.strip()[:240])
     return result.stdout.removesuffix('\n')
 
 
 def _xfget(key):
-    # A fresh profile may not have this channel yet. Listing a missing
-    # channel is an error, while listing all channels also verifies the bus.
-    channels = {line.strip() for line in _xfquery('-l', channel=False).splitlines()}
-    if 'xfce4-keyboard-shortcuts' not in channels:
-        return None
-    return _xfquery('-p', key) if key in _xfquery('-l').splitlines() else None
+    return _xfquery('-p', key)
 
 
 def _xfset(key, value):
