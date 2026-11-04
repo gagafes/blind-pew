@@ -63,8 +63,17 @@ class Composer:
 
 
 def convert(text, profile_id='ru', reverse=False):
+    return ''.join(convert_chunks((text,), profile_id, reverse))
+
+
+def convert_chunks(chunks, profile_id='ru', reverse=False):
+    """Convert bounded chunks without losing combinations at their boundaries."""
     profile = profiles()[profile_id]
     if reverse:
-        return ''.join(profile['reverse'].get(ch, ch) for ch in text)
-    composer = Composer(profile_id)
-    return ''.join(composer.feed(ch) for ch in text) + composer.flush()
+        for chunk in chunks:
+            yield ''.join(profile['reverse'].get(ch, ch) for ch in chunk)
+    else:
+        composer = Composer(profile_id)
+        for chunk in chunks:
+            yield ''.join(composer.feed(ch) for ch in chunk)
+        yield composer.flush()

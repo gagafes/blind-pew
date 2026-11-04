@@ -250,7 +250,7 @@ class Application(Gtk.Application):
             return
         try:
             config.update(ui_language=choice)
-        except OSError as error:
+        except (OSError, ValueError) as error:
             self.window.message(tr('Error') + ': ' + str(error))
             return
         old = self.window

@@ -1,8 +1,7 @@
 #!/usr/bin/python3
 """Real GI engine + D-Bus protocol, with a minimal test client (no ibus-daemon).
 
-Useful in CI environments that permit TCP but prohibit Unix sockets.
-This does NOT replace tests/run_ibus_smoke.sh on a real desktop.
+This isolates protocol edge cases and complements the installed daemon test.
 """
 import time
 import gi

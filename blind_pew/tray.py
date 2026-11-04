@@ -6,7 +6,9 @@ gi.require_version('AyatanaAppIndicator3', '0.1')
 from gi.repository import AyatanaAppIndicator3 as Indicator
 from gi.repository import Gdk, Gio, GLib, Gtk
 from pathlib import Path
+import os
 import re
+import tempfile
 from .i18n import tr
 
 
@@ -89,7 +91,7 @@ class Tray:
         def ready(source, result):
             try:
                 proxy = Gio.DBusProxy.new_finish(result)
-            except Exception:
+            except GLib.Error:
                 return
             if self.stopped or self.host_owner != owner:
                 return
@@ -167,13 +169,21 @@ class Tray:
         try:
             directory.mkdir(parents=True, exist_ok=True, mode=0o700)
             path = directory / ('country-' + country + '-011B46-FEE5AF.svg')
-            if not path.exists():
-                size = 34 if len(country) == 2 else 25 if len(country) == 3 else 20
-                svg = ('<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">'
+            size = 34 if len(country) == 2 else 25 if len(country) == 3 else 20
+            svg = ('<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">'
                        '<rect x="2" y="2" width="60" height="60" rx="13" fill="#011B46"/>'
                        f'<text x="32" y="44" text-anchor="middle" font-family="sans-serif" '
                        f'font-weight="bold" font-size="{size}" fill="#FEE5AF">{country}</text></svg>')
-                path.write_text(svg, encoding='utf-8')
+            # Never follow a pre-existing cache symlink or display cached SVG
+            # contents supplied by another process. Publish only our own icon.
+            fd, temp = tempfile.mkstemp(prefix='.country-', dir=directory)
+            try:
+                with os.fdopen(fd, 'w', encoding='utf-8') as handle:
+                    handle.write(svg)
+                os.replace(temp, path)
+            finally:
+                if os.path.exists(temp):
+                    os.unlink(temp)
             self.icon_path = str(path)
             self.indicator.set_icon_full(self.icon_path, detail)
             if self.xembed:

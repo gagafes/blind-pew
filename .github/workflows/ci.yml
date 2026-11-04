@@ -8,19 +8,33 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test-and-build:
+    name: Package / ${{ matrix.image }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    container: ${{ matrix.image }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [ubuntu:24.04, debian:13]
+    env:
+      DEBIAN_FRONTEND: noninteractive
+      LANG: C.UTF-8
+      PYTHONDONTWRITEBYTECODE: '1'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
       - name: Install test dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y python3-gi libglib2.0-bin gsettings-desktop-schemas gir1.2-ibus-1.0 gir1.2-gtk-3.0 gir1.2-gtk-4.0 gir1.2-ayatanaappindicator3-0.1 ibus ibus-gtk3 ibus-gtk4 im-config xfconf xvfb dbus-x11 desktop-file-utils
-      - name: Test
+          apt-get update
+          apt-get install -y --no-install-recommends python3 python3-gi libglib2.0-bin gsettings-desktop-schemas gir1.2-ibus-1.0 gir1.2-gtk-3.0 gir1.2-gtk-4.0 gir1.2-ayatanaappindicator3-0.1 ibus ibus-gtk3 ibus-gtk4 im-config xfconf xvfb xauth dbus-x11 desktop-file-utils nodejs lintian
+      - name: Unit, protocol and GUI regressions
         run: |
           /usr/bin/python3 -m unittest discover -s tests -v
           sh tests/run_protocol_smoke.sh
@@ -31,10 +45,54 @@ jobs:
           /usr/bin/python3 tests/run_gui_smoke.py tests/gtk4_module_smoke.py
           desktop-file-validate assets/blind-pew.desktop
           node --input-type=module --check < assets/gnome-extension/extension.js
-      - name: Build DEB
-        run: /usr/bin/python3 tools/build.py
+      - name: Build twice and verify reproducibility
+        run: |
+          /usr/bin/python3 tools/build.py
+          sha256sum dist/*.deb > /tmp/blind-pew-first-build.sha256
+          /usr/bin/python3 tools/build.py
+          sha256sum --check /tmp/blind-pew-first-build.sha256
+          lintian --fail-on error dist/*.deb
+      - name: Install, upgrade and exercise the packaged program
+        run: |
+          apt-get install -y ./downloads/blind-pew_0.1.0-1_all.deb
+          apt-get install -y ./dist/blind-pew_0.1.0-2_all.deb
+          dpkg --verify blind-pew
+          PYTHONPATH=/usr/share/blind-pew /usr/bin/python3 tests/installed_smoke.py
+          sh tests/run_ibus_smoke.sh
+          dpkg-query -W -f='${Package}\t${Version}\n' > dist/system-packages.tsv
+          (cd dist && sha256sum ./*.deb > SHA256SUMS)
+      - name: Verify removal and clean reinstall
+        run: |
+          apt-get remove -y blind-pew
+          test ! -e /usr/bin/blind-pew
+          test ! -e /usr/share/ibus/component/blind-pew.xml
+          apt-get install -y ./dist/blind-pew_0.1.0-2_all.deb
+          blind-pew --version
+          dpkg --verify blind-pew
+          if test -f downloads/blind-pew_0.1.0-2_all.deb; then
+            (cd downloads && sha256sum --check SHA256SUMS)
+          fi
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
-          name: blind-pew-deb
-          path: dist/*.deb
+          name: blind-pew-${{ strategy.job-index }}
+          path: dist/*
           if-no-files-found: error
+
+  security:
+    name: Source and secret scans
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Install distro scanners
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bandit pyflakes3 gitleaks
+      - name: Check Python and scan security issues
+        run: |
+          pyflakes3 blind_pew tools
+          bandit -r blind_pew tools -ll -ii
+          gitleaks detect --source . --redact --exit-code 1

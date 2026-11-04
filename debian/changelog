@@ -1,3 +1,12 @@
+blind-pew (0.1.0-2) unstable; urgency=medium
+
+  * Harden preferences and shortcut backups; save originals before activation.
+  * Replace cached tray icons atomically and stream CLI conversion in chunks.
+  * Include screenshots and release/security documentation in the package.
+  * Verify installed engines, desktop integration, package upgrades and scans.
+
+ -- Andrey Popovich <gagafes@gmail.com>  Wed, 04 Nov 2026 12:00:00 +0000
+
 blind-pew (0.1.0-1) unstable; urgency=medium
 
   * Initial release.

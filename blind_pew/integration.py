@@ -92,7 +92,7 @@ def session_settings():
         (general, 'use-system-keyboard-layout', False, 'layout'))
 
 
-def _write_session(values, save):
+def _write_session(values, save, save_first=False):
     """Keep desktop settings and their saved originals consistent on failure."""
     from gi.repository import Gio, GLib
     changes = [(settings, key, settings.get_value(key), value)
@@ -100,11 +100,16 @@ def _write_session(values, save):
                if settings.get_value(key).unpack() != value]
     if any(not settings.is_writable(key) for settings, key, _, _ in changes):
         raise RuntimeError(tr('Settings unavailable'))
+    # Persist originals before taking over settings. If the process is killed
+    # during activation, the next launch can still restore the user's values.
+    if save_first:
+        save()
     try:
         for settings, key, original, value in changes:
             if not settings.set_value(key, GLib.Variant(original.get_type_string(), value)):
                 raise RuntimeError(tr('Settings unavailable'))
-        save()
+        if not save_first:
+            save()
     except (OSError, ValueError, RuntimeError):
         for settings, key, original, _ in changes:
             settings.set_value(key, original)
@@ -122,7 +127,7 @@ def configure_session():
     for settings, key, _, field in targets:
         saved.setdefault(field, settings.get_value(key).unpack())
     _write_session([(settings, key, value) for settings, key, value, _ in targets],
-                   lambda: config.update(session_backup=backups))
+                   lambda: config.update(session_backup=backups), save_first=True)
 
 
 def restore_session():

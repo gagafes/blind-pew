@@ -1,4 +1,5 @@
 """One desktop shortcut: F12 invokes the running application's toggle action."""
+import re
 import subprocess
 from . import config, integration
 from .i18n import tr
@@ -11,6 +12,16 @@ XFCE_KEY = '/commands/custom/F12'
 XFCE_WM_KEY = '/xfwm4/custom/F12'
 
 
+def valid_custom_path(path):
+    return (isinstance(path, str) and len(path) <= 256 and
+            re.fullmatch(re.escape(GNOME_PREFIX) + r'(?:[A-Za-z0-9_-]+/)+', path) is not None)
+
+
+def valid_text(value, limit=2048):
+    return (isinstance(value, str) and len(value) <= limit and
+            re.search(r'[\x00\ud800-\udfff]', value) is None)
+
+
 def valid_backup(data):
     if not isinstance(data, dict):
         return {}
@@ -19,21 +30,21 @@ def valid_backup(data):
     if isinstance(gnome, dict):
         entry, displaced = gnome.get('entry'), gnome.get('displaced')
         if (isinstance(entry, dict) and set(entry) == {'name', 'command', 'binding'} and
-                all(isinstance(v, str) and len(v) <= 2048 for v in entry.values()) and
+                all(valid_text(v) for v in entry.values()) and
                 isinstance(gnome.get('listed'), bool) and isinstance(displaced, list) and
-                len(displaced) <= 32 and all(isinstance(p, str) and
-                    p.startswith(GNOME_PREFIX) and p.endswith('/') and '//' not in p and
-                    len(p) <= 256 for p in displaced)):
+                len(displaced) <= 32 and all(valid_custom_path(p) for p in displaced)):
             result['gnome'] = gnome
     xfce = data.get('xfce', {})
     if (isinstance(xfce, dict) and set(xfce) == {'command', 'wm'} and
-            all(v is None or isinstance(v, str) and len(v) <= 2048 for v in xfce.values())):
+            all(v is None or valid_text(v) for v in xfce.values())):
         result['xfce'] = xfce
     return result
 
 
 def _custom(path):
     from gi.repository import Gio
+    if not valid_custom_path(path):
+        raise ValueError('Invalid GNOME shortcut path')
     integration._settings(GNOME_SCHEMA)  # check schema availability before constructing
     return Gio.Settings.new_with_path(GNOME_SCHEMA + '.custom-keybinding', path)
 
@@ -72,7 +83,7 @@ def install():
         changes = [(own, key, value) for key, value in
                    (('name', 'Blind Pew'), ('command', COMMAND), ('binding', 'F12'))]
         for path in paths:
-            if path != GNOME_PATH and _custom(path).get_string('binding') == 'F12':
+            if valid_custom_path(path) and path != GNOME_PATH and _custom(path).get_string('binding') == 'F12':
                 if path not in saved['displaced']:
                     saved['displaced'].append(path)
                 changes.append((_custom(path), 'binding', ''))
@@ -80,7 +91,8 @@ def install():
             changes.append((root, 'custom-keybindings', paths + [GNOME_PATH]))
         if valid_backup(backups) != backups:
             raise RuntimeError(tr('Settings unavailable'))
-        integration._write_session(changes, lambda: config.update(hotkey_backup=backups))
+        integration._write_session(changes, lambda: config.update(hotkey_backup=backups),
+                                   save_first=True)
     else:
         original = {'command': _xfget(XFCE_KEY), 'wm': _xfget(XFCE_WM_KEY)}
         backups.setdefault('xfce', original)

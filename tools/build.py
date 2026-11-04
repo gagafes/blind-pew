@@ -2,7 +2,9 @@
 """Build a small architecture-independent .deb without downloading anything."""
 import gzip
 import hashlib
+import io
 import os
+from email.utils import parsedate_to_datetime
 from pathlib import Path
 import shutil
 import subprocess
@@ -17,7 +19,14 @@ from blind_pew import __version__, AUTHOR, EMAIL
 from blind_pew.i18n import engine_title
 from tools.translations import install as install_translations
 
-VERSION = __version__ + '-1'
+CHANGELOG = (ROOT / 'debian/changelog').read_text(encoding='utf-8')
+VERSION = CHANGELOG.splitlines()[0].split('(', 1)[1].split(')', 1)[0]
+if VERSION.rsplit('-', 1)[0] != __version__:
+    raise ValueError('Application version and Debian changelog disagree')
+RELEASE_DATE = next(line.rsplit('  ', 1)[1] for line in CHANGELOG.splitlines()
+                    if line.startswith(' -- '))
+DEFAULT_EPOCH = int(parsedate_to_datetime(RELEASE_DATE).timestamp())
+HOMEPAGE = 'https://github.com/gagafes/blind-pew'
 
 
 def component_xml():
@@ -27,7 +36,7 @@ def component_xml():
               'exec': '/usr/bin/blind-pew --ibus',
               'version': __version__, 'license': 'MIT',
               'author': AUTHOR,
-              'homepage': '', 'textdomain': 'blind-pew'}
+              'homepage': HOMEPAGE, 'textdomain': 'blind-pew'}
     for key, value in fields.items():
         ET.SubElement(component, key).text = value
     container = ET.SubElement(component, 'engines')
@@ -77,12 +86,19 @@ def stage(dest):
         content = (ROOT / name).read_text(encoding='utf-8')
         (doc / name).write_text(''.join(line for line in content.splitlines(keepends=True)
                                       if '](downloads/' not in line), encoding='utf-8')
-    for name in ('TESTING.md', 'REFERENCE.md'):
+    for name in ('TESTING.md', 'REFERENCE.md', 'RELEASE.md'):
         shutil.copyfile(ROOT / 'docs' / name, doc / 'docs' / name)
+    shutil.copytree(ROOT / 'docs/screenshots', doc / 'docs/screenshots')
+    shutil.copyfile(ROOT / 'SECURITY.md', doc / 'SECURITY.md')
+    shutil.copyfile(ROOT / 'CHANGELOG.md', doc / 'CHANGELOG.md')
     (doc / 'copyright').symlink_to('LICENSE')
     (doc / 'data').symlink_to('../../blind-pew/data')
     (doc / 'docs/blind-pew-logo.png').symlink_to('../../../blind-pew/docs/blind-pew-logo.png')
-    (doc / 'changelog.gz').write_bytes(gzip.compress((ROOT / 'debian/changelog').read_bytes(), mtime=0))
+    # gzip.compress(mtime=0) used different OS headers across Python versions.
+    buffer = io.BytesIO()
+    with gzip.GzipFile(filename='', fileobj=buffer, mode='wb', mtime=0) as handle:
+        handle.write(CHANGELOG.encode('utf-8'))
+    (doc / 'changelog.gz').write_bytes(buffer.getvalue())
 
 
 def build():
@@ -98,6 +114,7 @@ def build():
         (control / 'control').write_text(
             f'Package: blind-pew\nVersion: {VERSION}\nArchitecture: all\n'
             f'Maintainer: {AUTHOR} <{EMAIL}>\n'
+            f'Homepage: {HOMEPAGE}\n'
             'Section: utils\nPriority: optional\n'
             f'Installed-Size: {size}\n'
             'Depends: python3 (>= 3.10), python3-gi, gir1.2-ibus-1.0, gir1.2-gtk-3.0, '
@@ -112,14 +129,14 @@ def build():
             ' Native GTK preferences include a live country-code tray indicator.\n'
             ' Designed for Debian 13 and Ubuntu 24.04, GNOME and Xfce.\n', encoding='utf-8')
         (control / 'md5sums').write_text(''.join(
-            f'{hashlib.md5(p.read_bytes()).hexdigest()}  {p.relative_to(dest)}\n'
+            f'{hashlib.md5(p.read_bytes(), usedforsecurity=False).hexdigest()}  {p.relative_to(dest)}\n'
             for p in payload), encoding='utf-8')
         for p in dest.rglob('*'):
             if p.is_dir():
                 p.chmod(0o755)
             elif not p.is_symlink() and p != dest / 'usr/bin/blind-pew':
                 p.chmod(0o644)
-        epoch = int(os.environ.get('SOURCE_DATE_EPOCH', '1793145600'))
+        epoch = int(os.environ.get('SOURCE_DATE_EPOCH', str(DEFAULT_EPOCH)))
         for p in sorted(dest.rglob('*'), reverse=True):
             os.utime(p, (epoch, epoch), follow_symlinks=False)
         os.utime(dest, (epoch, epoch))

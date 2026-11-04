@@ -3,7 +3,7 @@ import sys
 from . import __version__, config, i18n
 from .i18n import tr
 from .catalog import profile_title
-from .core import convert, engines, profiles
+from .core import convert_chunks, engines, profiles
 
 
 def main():
@@ -29,9 +29,9 @@ def main():
             for name, profile, base in engines():
                 print(name, '\t', profile_title(profile['id']), 'QWERTZ' if base == 'de' else 'QWERTY')
         elif args.command == 'convert':
-            # Streaming lines bound memory; a newline ends all matching contexts.
-            for line in sys.stdin:
-                sys.stdout.write(convert(line, args.profile, args.reverse))
+            chunks = iter(lambda: sys.stdin.read(8192), '')
+            for text in convert_chunks(chunks, args.profile, args.reverse):
+                sys.stdout.write(text)
         elif args.command == 'doctor':
             from .integration import doctor
             return doctor()
