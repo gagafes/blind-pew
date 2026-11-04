@@ -28,8 +28,7 @@ The active source applies globally to applications connected to IBus.
 | Russian, DE rules | `w → в`, `v → ф`, `tsch → ч` |
 | Hebrew | `sh → ש`, `ms → ם`, `ks → ך` |
 
-All eight profiles support **QWERTY** and **QWERTZ**. Russian DE rules and
-the QWERTZ keyboard base are separate choices. The character mappings follow
+All eight profiles support **QWERTY** and **QWERTZ**. The character mappings follow
 the functional input tables of [Translit.ru](https://translit.ru/).
 Blind Pew is an independent project; see [reference information](docs/REFERENCE.md).
 

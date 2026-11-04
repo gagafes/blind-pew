@@ -29,8 +29,7 @@ gilt global für Anwendungen, die IBus verwenden.
 | Russisch, DE-Regeln | `w → в`, `v → ф`, `tsch → ч` |
 | Hebräisch | `sh → ש`, `ms → ם`, `ks → ך` |
 
-Alle acht Profile unterstützen **QWERTY** und **QWERTZ**. Die russischen
-DE-Regeln und die Tastaturbasis QWERTZ werden unabhängig voneinander gewählt.
+Alle acht Profile unterstützen **QWERTY** und **QWERTZ**.
 Die Zeichenzuordnungen entsprechen den funktionalen Eingabetabellen von
 [Translit.ru](https://translit.ru/). Blind Pew ist ein unabhängiges Projekt;
 siehe [Angaben zu den Referenzen](docs/REFERENCE.md).
