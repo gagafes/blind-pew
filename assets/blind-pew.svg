@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <title>Blind Pew — їє</title>
+  <rect x="2" y="2" width="60" height="60" rx="13" fill="#011B46"/>
+  <g fill="#FEE5AF">
+    <circle cx="16" cy="18" r="3.5"/>
+    <circle cx="24" cy="18" r="3.5"/>
+    <rect x="16.5" y="27" width="7" height="22" rx="1"/>
+  </g>
+  <path d="M49 30 C46.8 27.6 44.2 27 41 27 C34.6 27 30.5 31.4 30.5 38 C30.5 44.6 34.6 49 41 49 C44.2 49 46.8 48.4 49 46 M31 38 H43.5"
+        fill="none" stroke="#FEE5AF" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

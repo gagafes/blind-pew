@@ -1,0 +1,7 @@
+{
+  "uuid": "blind-pew@local",
+  "name": "Blind Pew Integration",
+  "description": "Global input-source switching for Blind Pew. No typed text is collected.",
+  "shell-version": ["46", "47", "48"],
+  "version": 1
+}
