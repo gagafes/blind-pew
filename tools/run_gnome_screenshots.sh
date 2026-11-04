@@ -13,10 +13,16 @@ export WAYLAND_DISPLAY=wayland-blind-pew
 export LANG=C.UTF-8 LANGUAGE=en LC_ALL=C.UTF-8
 shell_pid=
 cleanup() {
-    if [ -n "$shell_pid" ]; then kill "$shell_pid" 2>/dev/null || true; fi
+    if [ -n "$shell_pid" ]; then
+        kill "$shell_pid" 2>/dev/null || true
+        wait "$shell_pid" 2>/dev/null || true
+    fi
     rm -rf "$XDG_RUNTIME_DIR"
 }
 trap cleanup EXIT
+
+dbus-update-activation-environment XDG_RUNTIME_DIR XDG_CONFIG_HOME XDG_CACHE_HOME \
+    XDG_CURRENT_DESKTOP XDG_SESSION_TYPE GDK_BACKEND WAYLAND_DISPLAY LANG LANGUAGE LC_ALL
 
 gnome-shell --version | tee screenshot-output/gnome-version.txt
 gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita'

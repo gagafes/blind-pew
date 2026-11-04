@@ -19,6 +19,7 @@ connection = Gio.bus_get_sync(Gio.BusType.SESSION, None)
 app = Application()
 started = time.monotonic()
 failed = []
+last_report = -1
 
 
 def shell_eval(code):
@@ -51,6 +52,10 @@ def guarded(callback):
             failed.append(str(error))
             import traceback
             traceback.print_exc()
+            try:
+                capture('gnome-debug-en.png')
+            except Exception as capture_error:
+                print('Diagnostic capture:', capture_error, flush=True)
             app.quit()
             return GLib.SOURCE_REMOVE
     return run
@@ -82,6 +87,14 @@ def about_capture():
 
 
 def ready():
+    global last_report
+    report = int(time.monotonic() - started) // 10
+    if report != last_report:
+        last_report = report
+        print('Startup:', app.last_startup,
+              'tray:', bool(app.tray and app.tray.available()),
+              'extensions:', shell_eval("global.settings.get_strv('enabled-extensions')"),
+              flush=True)
     if time.monotonic() - started > 55:
         raise RuntimeError('GNOME/IBus/tray did not become ready')
     if not app.window or not app.last_startup or not app.last_startup.ready:
