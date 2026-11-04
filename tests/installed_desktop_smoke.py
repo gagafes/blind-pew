@@ -3,7 +3,6 @@
 # Copyright (c) 2026 Andrey Popovich
 """Exercise the installed app against a real desktop, panel and IBus daemon."""
 import faulthandler
-import os
 from pathlib import Path
 import subprocess
 import time

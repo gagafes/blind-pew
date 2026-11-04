@@ -137,5 +137,5 @@ class Packaging(unittest.TestCase):
                     self.assertTrue((docs / image).is_file(), (readme, image))
             self.assertTrue((docs / 'SECURITY.md').is_file())
             self.assertTrue((docs / 'docs/RELEASE.md').is_file())
-            compressed = (docs / 'changelog.gz').read_bytes()
+            compressed = (docs / 'changelog.Debian.gz').read_bytes()
             self.assertEqual(compressed[9], 255, 'Portable gzip OS header')

@@ -96,14 +96,20 @@ def stage(dest):
     shutil.copyfile(ROOT / 'CHANGELOG.md', doc / 'CHANGELOG.md')
     shutil.copyfile(ROOT / 'THIRD_PARTY_NOTICES.md', doc / 'THIRD_PARTY_NOTICES.md')
     shutil.copytree(ROOT / 'LICENSES', doc / 'LICENSES')
-    (doc / 'copyright').symlink_to('LICENSE')
+    shutil.copyfile(ROOT / 'LICENSE', doc / 'copyright')
     (doc / 'data').symlink_to('../../blind-pew/data')
     (doc / 'docs/blind-pew-logo.png').symlink_to('../../../blind-pew/docs/blind-pew-logo.png')
     # gzip.compress(mtime=0) used different OS headers across Python versions.
     buffer = io.BytesIO()
     with gzip.GzipFile(filename='', fileobj=buffer, mode='wb', mtime=0) as handle:
         handle.write(CHANGELOG.encode('utf-8'))
-    (doc / 'changelog.gz').write_bytes(buffer.getvalue())
+    (doc / 'changelog.Debian.gz').write_bytes(buffer.getvalue())
+    manual = dest / 'usr/share/man/man1'
+    manual.mkdir(parents=True)
+    buffer = io.BytesIO()
+    with gzip.GzipFile(filename='', fileobj=buffer, mode='wb', mtime=0) as handle:
+        handle.write((ROOT / 'docs/blind-pew.1').read_bytes())
+    (manual / 'blind-pew.1.gz').write_bytes(buffer.getvalue())
 
 
 def build():

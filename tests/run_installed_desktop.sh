@@ -35,7 +35,9 @@ fi
 dbus-update-activation-environment XDG_RUNTIME_DIR XDG_CONFIG_HOME XDG_CACHE_HOME \
     XDG_CURRENT_DESKTOP XDG_SESSION_TYPE GDK_BACKEND LANG LANGUAGE LC_ALL \
     GTK_IM_MODULE XMODIFIERS IBUS_ADDRESS
-ibus-daemon --address="$IBUS_ADDRESS" --panel disable --config disable --cache refresh \
+gdb --batch --return-child-result -ex 'set pagination off' \
+    -ex 'handle SIGTERM nostop noprint pass' -ex run -ex 'thread apply all bt 15' \
+    --args ibus-daemon --address="$IBUS_ADDRESS" --panel disable --cache refresh \
     > "desktop-output/ibus-$1.log" 2>&1 &
 ibus_pid=$!
 pids+=("$ibus_pid")
@@ -89,11 +91,15 @@ XML
     xfce4-panel --disable-wm-check > desktop-output/xfce4-panel.log 2>&1 &
     pids+=("$!")
 fi
-/usr/bin/python3 tests/installed_desktop_smoke.py
+timeout --preserve-status --signal=INT --kill-after=5s 25s gdb --batch --return-child-result \
+    -ex 'set pagination off' -ex run -ex 'thread apply all bt 15' \
+    --args /usr/bin/python3 tests/installed_desktop_smoke.py
 kill -0 "$ibus_pid"
 if [ "$1" = xfce ]; then
     gsettings set org.freedesktop.ibus.general use-global-engine true
     /usr/bin/python3 tests/installed_gtk_input.py 3.0
     kill -0 "$ibus_pid"
-    GDK_DEBUG=gl-disable,vulkan-disable /usr/bin/python3 tests/installed_gtk_input.py 4.0
+    GDK_DEBUG=gl-disable,vulkan-disable timeout --preserve-status --signal=INT --kill-after=5s 15s \
+        gdb --batch --return-child-result -ex 'set pagination off' -ex run \
+        -ex 'thread apply all bt 15' --args /usr/bin/python3 tests/installed_gtk_input.py 4.0
 fi

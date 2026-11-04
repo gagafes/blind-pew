@@ -1,0 +1,68 @@
+.\" SPDX-License-Identifier: MIT
+.\" Copyright (c) 2026 Andrey Popovich
+.TH BLIND-PEW 1 "November 2026" "Blind Pew 0.1.0" "User Commands"
+.SH NAME
+blind-pew \- offline transliteration and input-source switching
+.SH SYNOPSIS
+.B blind-pew
+.RI [ setup | doctor | list | toggle | disconnect ]
+.br
+.B blind-pew convert
+.RB [ --profile " PROFILE" ]
+.RB [ --reverse ]
+.br
+.B blind-pew
+.RB [ --version | --help ]
+.SH DESCRIPTION
+Blind Pew provides IBus transliteration for Belarusian, Ukrainian, Lithuanian,
+Georgian, Armenian, Russian and Hebrew on Debian/Ubuntu with GNOME or Xfce.
+The settings window selects a profile and QWERTY or QWERTZ base.
+F12 and vertical scrolling over the tray toggle the selected transliteration
+and the previous ordinary input source while the application is running.
+.SH COMMANDS
+.TP
+.B setup
+Open settings. This is also the default when no command is supplied.
+.TP
+.B doctor
+Report the desktop environment and IBus engine registration; return a nonzero
+status when IBus or expected engines are unavailable.
+.TP
+.B list
+List the installed program's available engine IDs and profile names.
+.TP
+.B toggle
+Send a toggle action to the running settings application.
+.TP
+.B disconnect
+Remove Blind Pew sources and restore saved input/shortcut settings.
+Use an ordinary input source and quit the application before uninstalling.
+.TP
+.B convert
+Read standard input and write transliterated text to standard output.
+This command works without a graphical session or an IBus daemon.
+.TP
+.BI "\-\-profile " PROFILE
+Converter profile: be, ua, li, ge, am, ru, rude or il. Default: ru.
+.TP
+.B \-\-reverse
+Convert the selected script to Latin characters.
+.SH FILES
+.TP
+.I ~/.config/blind-pew/settings.json
+Preferences and saved desktop settings. An absolute XDG_CONFIG_HOME overrides
+~/.config. Typed text is not stored in this file.
+.TP
+.I /usr/share/doc/blind-pew/
+README translations, licensing notices, test scope and release documentation.
+.SH NOTES
+The application uses system IBus modules, including ibus-gtk4 for GTK4 clients.
+GNOME requires the supplied Blind Pew Integration extension and an AppIndicator
+extension for the tray. Xfce requires a tray panel item.
+Password, PIN and Private fields bypass conversion when the client marks them.
+Blind Pew does not operate in a TTY or at the login screen.
+.SH AUTHOR
+Andrey Popovich <gagafes@gmail.com>.
+.SH SEE ALSO
+.BR ibus (1),
+.BR im-config (8)

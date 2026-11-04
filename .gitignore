@@ -1,3 +1,6 @@
 __pycache__/
 *.py[cod]
 dist/
+desktop-output/
+core
+core.*

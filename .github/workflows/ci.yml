@@ -117,7 +117,7 @@ jobs:
       - name: Install desktops and fresh DEB
         run: |
           apt-get update
-          apt-get install -y --no-install-recommends python3 gnome-shell gnome-settings-daemon gnome-shell-extension-appindicator gsettings-desktop-schemas gjs dbus-x11 fonts-cantarell fonts-noto-core libgl1-mesa-dri xfwm4 xfce4-panel xfce4-settings xdotool xvfb xauth gir1.2-gtk-4.0
+          apt-get install -y --no-install-recommends python3 gnome-shell gnome-settings-daemon gnome-shell-extension-appindicator gsettings-desktop-schemas gjs dbus-x11 fonts-cantarell fonts-noto-core libgl1-mesa-dri xfwm4 xfce4-panel xfce4-settings xdotool xvfb xauth gir1.2-gtk-4.0 gdb
           mkdir -p /run/dbus
           dbus-daemon --system --fork --nopidfile
           # APT creates this marker even though the container has no logind.
