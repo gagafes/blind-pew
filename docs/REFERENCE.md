@@ -1,6 +1,6 @@
 # Functional references
 
-Blind Pew is an independent implementation of the input behavior documented
+The Blind Pew engine is an independently structured implementation of the input behavior documented
 by these Translit.ru pages:
 
 | Profile | Reference |
@@ -35,3 +35,8 @@ The importer reads the eight known profile filenames as data without
 executing JavaScript. Review table changes and rerun desktop input checks
 before distributing a package.
 
+
+The importer extracts functional mapping data. No separate redistribution grant
+for those tables is recorded here; references and page hashes are provenance,
+not a license. See [licensing notices](../THIRD_PARTY_NOTICES.md) and the
+[review scope](LEGAL_REVIEW.md).

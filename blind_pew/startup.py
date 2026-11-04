@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 """Idempotent session startup; called by the GUI in a worker thread."""
 from dataclasses import dataclass
 import os

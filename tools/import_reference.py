@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 """Refresh known functional tables from saved HTML without executing JavaScript.
 
 Usage: import_reference.py reference_directory [profiles.json]

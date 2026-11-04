@@ -162,6 +162,8 @@ have automated checks; all 49 languages have not been reviewed by native speaker
 
 [MIT License](LICENSE). System dependencies retain their own licenses.
 
+[Licensing and provenance](THIRD_PARTY_NOTICES.md) · [Comparison with similar projects (Russian)](docs/COMPARISON.md)
+
 ## Development attribution
 
 Developed with assistance from **OpenAI Codex**. Project concept, requirements, and direction: **Andrey Popovich**.

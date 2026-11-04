@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 """Transliteration profiles, stable IBus IDs and country indicators."""
 from .core import profiles
 from . import i18n

@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 """Real GI engine + D-Bus protocol, with a minimal test client (no ibus-daemon).
 
 This isolates protocol edge cases and complements the installed daemon test.

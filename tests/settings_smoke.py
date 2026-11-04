@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 """Run with GSETTINGS_BACKEND=memory; never modify a user's real settings."""
 import os
 import tempfile

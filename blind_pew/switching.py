@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 """Serialize global source changes so fast wheel events keep their order."""
 def is_translit(source):
     return bool(source and source[0] == 'ibus' and source[1].startswith('blind-pew:'))

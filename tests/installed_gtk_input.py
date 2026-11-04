@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 """Send real X11 key events through installed GTK3/GTK4 and IBus modules."""
 import subprocess
 import sys

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 """Bounded, rendered-suffix transducer; no desktop or network dependencies."""
 from functools import lru_cache
 import json

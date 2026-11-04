@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 """One desktop shortcut: F12 invokes the running application's toggle action."""
 import re
 import subprocess
@@ -49,9 +51,12 @@ def _custom(path):
     return Gio.Settings.new_with_path(GNOME_SCHEMA + '.custom-keybinding', path)
 
 
-def _xfquery(*args):
+def _xfquery(*args, channel=True):
+    command = ['xfconf-query']
+    if channel:
+        command += ['-c', 'xfce4-keyboard-shortcuts']
     try:
-        result = subprocess.run(['xfconf-query', '-c', 'xfce4-keyboard-shortcuts', *args],
+        result = subprocess.run([*command, *args],
                                 capture_output=True, text=True, timeout=3)
     except (OSError, subprocess.TimeoutExpired) as error:
         raise RuntimeError(tr('Settings unavailable') + ': ' + str(error)) from error
@@ -61,6 +66,11 @@ def _xfquery(*args):
 
 
 def _xfget(key):
+    # A fresh profile may not have this channel yet. Listing a missing
+    # channel is an error, while listing all channels also verifies the bus.
+    channels = {line.strip() for line in _xfquery('-l', channel=False).splitlines()}
+    if 'xfce4-keyboard-shortcuts' not in channels:
+        return None
     return _xfquery('-p', key) if key in _xfquery('-l').splitlines() else None
 
 

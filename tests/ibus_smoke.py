@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 """Real IBus/D-Bus smoke test. Run under tests/run_ibus_smoke.sh after install."""
 import time
 import gi

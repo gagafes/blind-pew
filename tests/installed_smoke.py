@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 """Inspect the installed payload, not the source checkout."""
 import json
 from pathlib import Path
@@ -24,8 +26,14 @@ for language, _ in i18n.LANGUAGES:
     assert Path('/usr/share/locale', language, 'LC_MESSAGES/blind-pew.mo').is_file()
 metadata = json.loads(Path('/usr/share/gnome-shell/extensions/blind-pew@local/metadata.json').read_text())
 assert metadata['shell-version'] == ['46', '47', '48']
-for path in ('LICENSE', 'copyright', 'docs/gnome-settings-en.png'):
-    if path.startswith('docs/gnome'):
-        path = path.replace('docs/', 'docs/screenshots/')
+for path in ('LICENSE', 'copyright', 'docs/screenshots/gnome-settings-en.png',
+             'THIRD_PARTY_NOTICES.md', 'LICENSES/LGPL-3.0.txt'):
     assert Path('/usr/share/doc/blind-pew', path).is_file(), path
 print('PASS installed CLI, 16 engines, 49 gettext catalogs, extension and documentation')
+
+import os
+env = {key: value for key, value in os.environ.items() if key not in ('DISPLAY', 'WAYLAND_DISPLAY')}
+headless = subprocess.run(['blind-pew', 'setup'], env=env, capture_output=True, text=True, timeout=5)
+assert headless.returncode == 1, headless
+assert 'Traceback' not in headless.stderr, headless.stderr
+print('PASS headless startup reports a controlled error')

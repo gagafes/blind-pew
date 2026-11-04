@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 """IBus adapter. It never hooks devices, polls keys, or reads surrounding text."""
 import itertools
 import signal

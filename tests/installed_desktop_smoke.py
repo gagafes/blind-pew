@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 """Exercise the installed app against a real desktop, panel and IBus daemon."""
 import os
 from pathlib import Path

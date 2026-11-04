@@ -1,4 +1,6 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 set -eu
 test_root=$(mktemp -d)
 trap 'rm -rf "$test_root"' EXIT

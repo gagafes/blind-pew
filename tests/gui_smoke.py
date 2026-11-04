@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 """GTK application + real AppIndicator + a protocol-level test panel.
 
 The test panel checks registration and lifecycle; it is not GNOME/Xfce Shell.

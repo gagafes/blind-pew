@@ -169,6 +169,8 @@ eine muttersprachliche Prüfung aller 49 Sprachen steht aus.
 
 [MIT-Lizenz](LICENSE). Systemabhängigkeiten behalten ihre eigenen Lizenzen.
 
+[Lizenzen und Herkunft](THIRD_PARTY_NOTICES.md) · [Vergleich mit ähnlichen Projekten (Russisch)](docs/COMPARISON.md)
+
 ## Mitwirkung bei der Entwicklung
 
 Entwickelt mit Unterstützung von **OpenAI Codex**. Projektidee, Anforderungen und Leitung: **Andrey Popovich**.

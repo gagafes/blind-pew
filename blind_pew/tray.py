@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 """SNI/AppIndicator on panels and an XEmbed tray icon on X11."""
 import gi
 gi.require_version('Gtk', '3.0')

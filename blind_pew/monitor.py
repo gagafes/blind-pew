@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 """Event-driven active input-source monitor."""
 import gi
 gi.require_version('IBus', '1.0')

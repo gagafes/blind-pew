@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 import unittest
 from blind_pew.switching import SwitchQueue, TogglePair
 from blind_pew.catalog import source_for

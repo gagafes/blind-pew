@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 """Real Xfconf and Gio settings; run only in the isolated GUI test session."""
 import os
 import subprocess

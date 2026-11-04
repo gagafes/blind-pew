@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 import unittest
 from blind_pew.catalog import profiles, source_for, country_for, PROFILE_ORDER
 

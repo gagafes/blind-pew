@@ -1,4 +1,6 @@
 #!/bin/bash
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 set -euo pipefail
 # Run inside a disposable session bus; the caller supplies Xvfb for Xfce.
 mkdir -p desktop-output
@@ -11,6 +13,7 @@ export LANG=C.UTF-8 LANGUAGE=en LC_ALL=C.UTF-8
 export GTK_IM_MODULE=ibus XMODIFIERS=@im=ibus
 export PYTHONPATH=/usr/share/blind-pew
 export LIBGL_ALWAYS_SOFTWARE=1
+export GSK_RENDERER=cairo GTK_A11Y=none NO_AT_BRIDGE=1
 unset GSETTINGS_BACKEND IBUS_ADDRESS
 pids=()
 cleanup() {

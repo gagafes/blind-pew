@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 """Check the REAL GTK4 IBus input module, without faking successful input.
 
 This checks GTK4 module loading and widget configuration, not end-to-end

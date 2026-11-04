@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 """Regressions for damaged preferences, bounded input and package contents."""
 import io
 import json
@@ -61,6 +63,18 @@ class Preferences(unittest.TestCase):
             config.path().write_text(json.dumps(data))
             self.assertEqual(config.load()['hotkey_backup'], {})
             self.assertEqual(config.load()['session_backup'], {})
+
+
+class FreshXfce(unittest.TestCase):
+    def test_absent_channel_has_no_saved_binding(self):
+        with patch.object(hotkey, '_xfquery', return_value='Channels:') as query:
+            self.assertIsNone(hotkey._xfget(hotkey.XFCE_KEY))
+        query.assert_called_once_with('-l', channel=False)
+
+    def test_connection_failure_is_not_treated_as_missing_binding(self):
+        with patch.object(hotkey, '_xfquery', side_effect=RuntimeError('No session bus')):
+            with self.assertRaises(RuntimeError):
+                hotkey._xfget(hotkey.XFCE_KEY)
 
 
 class Streaming(unittest.TestCase):

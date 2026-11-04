@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 """Run GUI checks on an authenticated local display and private session bus."""
 import os
 from pathlib import Path

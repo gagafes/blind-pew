@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 """Offline interface translation; system selection follows Malferma Libro.
 
 English message IDs are a safe fallback. Language changes never alter the

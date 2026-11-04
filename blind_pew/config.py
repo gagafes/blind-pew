@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 """Small, validated per-user preferences, written atomically."""
 import json
 import os

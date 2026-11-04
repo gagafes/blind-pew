@@ -1,4 +1,6 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 set -eu
 # Use an isolated test user profile; never touch a logged-in user's settings.
 test_root=$(mktemp -d)

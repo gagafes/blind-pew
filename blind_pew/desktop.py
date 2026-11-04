@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 """Activate global input sources through GNOME or IBus."""
 import subprocess
 from gi.repository import Gio, GLib

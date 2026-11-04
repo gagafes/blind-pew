@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 """Build a small architecture-independent .deb without downloading anything."""
 import gzip
 import hashlib
@@ -69,6 +71,7 @@ def stage(dest):
         ('assets/blind-pew.svg', 'usr/share/icons/hicolor/scalable/apps/blind-pew.svg'),
         ('docs/blind-pew-logo.png', 'usr/share/blind-pew/docs/blind-pew-logo.png'),
         ('LICENSE', 'usr/share/doc/blind-pew/LICENSE'),
+        ('assets/gnome-extension/LICENSE', 'usr/share/gnome-shell/extensions/blind-pew@local/LICENSE'),
         ('assets/gnome-extension/metadata.json', 'usr/share/gnome-shell/extensions/blind-pew@local/metadata.json'),
         ('assets/gnome-extension/extension.js', 'usr/share/gnome-shell/extensions/blind-pew@local/extension.js'),
     ]:
@@ -86,11 +89,13 @@ def stage(dest):
         content = (ROOT / name).read_text(encoding='utf-8')
         (doc / name).write_text(''.join(line for line in content.splitlines(keepends=True)
                                       if '](downloads/' not in line), encoding='utf-8')
-    for name in ('TESTING.md', 'REFERENCE.md', 'RELEASE.md'):
+    for name in ('TESTING.md', 'REFERENCE.md', 'RELEASE.md', 'LEGAL_REVIEW.md', 'COMPARISON.md'):
         shutil.copyfile(ROOT / 'docs' / name, doc / 'docs' / name)
     shutil.copytree(ROOT / 'docs/screenshots', doc / 'docs/screenshots')
     shutil.copyfile(ROOT / 'SECURITY.md', doc / 'SECURITY.md')
     shutil.copyfile(ROOT / 'CHANGELOG.md', doc / 'CHANGELOG.md')
+    shutil.copyfile(ROOT / 'THIRD_PARTY_NOTICES.md', doc / 'THIRD_PARTY_NOTICES.md')
+    shutil.copytree(ROOT / 'LICENSES', doc / 'LICENSES')
     (doc / 'copyright').symlink_to('LICENSE')
     (doc / 'data').symlink_to('../../blind-pew/data')
     (doc / 'docs/blind-pew-logo.png').symlink_to('../../../blind-pew/docs/blind-pew-logo.png')
@@ -128,8 +133,10 @@ def build():
             ' on/off switching and automatic IBus startup.\n'
             ' Native GTK preferences include a live country-code tray indicator.\n'
             ' Designed for Debian 13 and Ubuntu 24.04, GNOME and Xfce.\n', encoding='utf-8')
+        # Debian's md5sums format is for installed-file checks. Published
+        # downloads use SHA-256; no security decision relies on this MD5.
         (control / 'md5sums').write_text(''.join(
-            f'{hashlib.md5(p.read_bytes(), usedforsecurity=False).hexdigest()}  {p.relative_to(dest)}\n'
+            f'{hashlib.md5(p.read_bytes(), usedforsecurity=False).hexdigest()}  {p.relative_to(dest)}\n'  # nosec B303
             for p in payload), encoding='utf-8')
         for p in dest.rglob('*'):
             if p.is_dir():

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 """Compact GTK preferences for transliteration; IBus handles application input."""
 import threading
 import signal
@@ -400,6 +402,8 @@ class Application(Gtk.Application):
 
 
 def run():
+    if not Gtk.init_check()[0]:
+        raise RuntimeError(tr('Open Blind Pew in your desktop session.'))
     app = Application()
     for sig in (signal.SIGINT, signal.SIGTERM):
         GLib.unix_signal_add(GLib.PRIORITY_DEFAULT, sig, lambda: (app.quit(), False)[1])

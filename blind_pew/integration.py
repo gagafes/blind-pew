@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 """Per-user IBus setup. Standard system layouts remain owned by the desktop."""
 import os
 from .core import engines

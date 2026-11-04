@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Andrey Popovich
 """GNOME's global source-switching bridge over a real D-Bus session."""
 import os
 import time
