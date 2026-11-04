@@ -15,6 +15,18 @@ A small offline transliteration switcher. Choose a language and use **F12**
 or the **mouse wheel over the tray icon** to turn transliteration on or off.
 The active source applies globally to applications connected to IBus.
 
+## Screenshots
+
+GNOME 46 / Wayland on Ubuntu 24.04, with the interface set to English.
+
+**Settings and transliteration preview**
+
+![Settings and transliteration preview](docs/screenshots/gnome-settings-en.png)
+
+**About Blind Pew**
+
+![About Blind Pew](docs/screenshots/gnome-about-en.png)
+
 ## Languages
 
 | Language | Examples |

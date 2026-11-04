@@ -16,6 +16,18 @@ die Transliteration mit **F12** oder dem **Mausrad über dem Symbol im
 Benachrichtigungsbereich** ein- und ausschalten. Die aktive Eingabequelle
 gilt global für Anwendungen, die IBus verwenden.
 
+## Bildschirmfotos
+
+GNOME 46 / Wayland unter Ubuntu 24.04 mit englischer Programmoberfläche.
+
+**Einstellungen und Transliterationsvorschau**
+
+![Einstellungen und Transliterationsvorschau](docs/screenshots/gnome-settings-en.png)
+
+**Über Blind Pew**
+
+![Über Blind Pew](docs/screenshots/gnome-about-en.png)
+
 ## Sprachen
 
 | Sprache | Beispiele |
