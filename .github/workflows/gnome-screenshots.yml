@@ -1,0 +1,43 @@
+name: Capture GNOME screenshots
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [docs/gnome-screenshots]
+    paths:
+      - .github/workflows/gnome-screenshots.yml
+      - tools/capture_gnome_screenshots.py
+      - tools/run_gnome_screenshots.sh
+
+permissions:
+  contents: read
+
+jobs:
+  screenshots:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      LANG: C.UTF-8
+      LANGUAGE: en
+      LC_ALL: C.UTF-8
+      LIBGL_ALWAYS_SOFTWARE: "1"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Install GNOME and Blind Pew
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends gnome-shell gnome-settings-daemon gnome-shell-extension-appindicator gnome-backgrounds gsettings-desktop-schemas dbus-x11 fonts-cantarell fonts-noto-core
+          sudo apt-get install -y ./downloads/blind-pew_0.1.0-1_all.deb
+      - name: Capture English interface in GNOME Wayland
+        run: timeout 180s dbus-run-session -- bash tools/run_gnome_screenshots.sh
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: always()
+        with:
+          name: blind-pew-gnome-en
+          path: |
+            docs/screenshots/*.png
+            screenshot-output/*
+          if-no-files-found: error
+
