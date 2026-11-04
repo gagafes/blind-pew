@@ -230,6 +230,18 @@ def exercise():
         app.monitor = InputMonitor(app.tray.set_input, bus=test_bus, source_changed=app.source_changed)
         app.desktop.bus = test_bus
         wait_for(lambda: app.tray.country == 'RU')
+        from pathlib import Path
+        cached = Path(app.tray.icon_path)
+        victim = cached.parent / 'unrelated.txt'
+        victim.write_text('do not overwrite')
+        cached.unlink()
+        cached.symlink_to(victim)
+        app.tray.country = None
+        app.tray.set_input('RU', 'regenerated icon')
+        assert victim.read_text() == 'do not overwrite'
+        assert not cached.is_symlink()
+        assert cached.read_text().startswith('<svg')
+        print('PASS tray cache symlink replaced without touching target')
         for name, country in [('ua', 'UA'), ('be', 'BY'), ('li', 'LT'), ('ge', 'GE'), ('am', 'AM'), ('il', 'IL')]:
             test_bus.select(f'blind-pew:{name}:us')
             wait_for(lambda: app.tray.country == country)

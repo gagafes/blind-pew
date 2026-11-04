@@ -96,3 +96,36 @@ jobs:
           pyflakes3 blind_pew tools
           bandit -r blind_pew tools -ll -ii
           gitleaks detect --source . --redact --exit-code 1
+
+  desktop:
+    name: Desktop / ${{ matrix.image }}
+    runs-on: ubuntu-24.04
+    container: ${{ matrix.image }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [ubuntu:24.04, debian:13]
+    env:
+      DEBIAN_FRONTEND: noninteractive
+      LANG: C.UTF-8
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Install desktops and fresh DEB
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends python3 gnome-shell gnome-settings-daemon gnome-shell-extension-appindicator gsettings-desktop-schemas gjs dbus-x11 fonts-cantarell fonts-noto-core libgl1-mesa-dri xfwm4 xfce4-panel xfce4-settings xdotool xvfb xauth gir1.2-gtk-4.0
+          /usr/bin/python3 tools/build.py
+          apt-get install -y ./dist/blind-pew_0.1.0-2_all.deb
+      - name: Xfce and real GTK3/GTK4 typing
+        run: timeout 180s dbus-run-session -- xvfb-run -a -s '-screen 0 1280x960x24 -nolisten tcp' bash tests/run_installed_desktop.sh xfce
+      - name: GNOME Wayland integration
+        run: timeout 180s dbus-run-session -- bash tests/run_installed_desktop.sh gnome
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        if: always()
+        with:
+          name: desktop-logs-${{ strategy.job-index }}
+          path: desktop-output/*
+          if-no-files-found: warn

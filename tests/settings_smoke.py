@@ -52,7 +52,12 @@ with tempfile.TemporaryDirectory() as tmp:
             value = original if field == 'shortcut' else not desired
             originals[field] = value
             settings.set_value(setting, GLib.Variant(settings.get_value(setting).get_type_string(), value))
-        integration.configure_session()
+        real_set = Gio.Settings.set_value
+        def checked_set(settings, setting, value):
+            assert config.load()['session_backup'][name] == originals, 'Backup saved too late'
+            return real_set(settings, setting, value)
+        with patch.object(Gio.Settings, 'set_value', checked_set):
+            integration.configure_session()
         for settings, setting, desired, _ in targets:
             assert settings.get_value(setting).unpack() == desired
         integration.configure_session()
