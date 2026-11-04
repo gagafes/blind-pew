@@ -180,6 +180,3 @@ all 49 languages have not been reviewed by native speakers.
 
 Developed with assistance from **OpenAI Codex**. Project concept, requirements, and direction: **Andrey Popovich**.
 
-## More from the author
-
-[Malferma Libro](https://github.com/gagafes/malferma-libro) — an offline desktop ebook reader for Debian and Ubuntu, with a local library and OPDS support.
