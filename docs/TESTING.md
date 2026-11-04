@@ -30,8 +30,8 @@ node --input-type=module --check < assets/gnome-extension/extension.js
 ~~~
 
 Run GUI checks sequentially. The runners isolate configuration, cache,
-GSettings and the display. Their private D-Bus sessions use loopback TCP
-to work in environments that restrict Unix sockets.
+GSettings and the display. Their private D-Bus sessions use Unix sockets
+with local-user authentication. The virtual X display uses loopback TCP.
 
 The tests cover:
 

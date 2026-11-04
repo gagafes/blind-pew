@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Isolated test display/session using TCP for restricted CI environments."""
+"""Isolated test display with an authenticated local D-Bus session."""
 import os
 from pathlib import Path
 import socket
@@ -11,9 +11,9 @@ import time
 with tempfile.TemporaryDirectory(prefix='translit-gui-test-') as tmp:
     root = Path(tmp)
     config = root / 'bus.conf'
-    config.write_text('''<!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-Bus Bus Configuration 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
-<busconfig><type>session</type><standard_session_servicedirs/><listen>tcp:host=127.0.0.1,port=0,family=ipv4</listen>
-<auth>ANONYMOUS</auth><allow_anonymous/><policy context="default"><allow send_destination="*" eavesdrop="true"/><allow eavesdrop="true"/><allow own="*"/></policy></busconfig>''')
+    config.write_text(f'''<!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-Bus Bus Configuration 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
+<busconfig><type>session</type><standard_session_servicedirs/><listen>unix:tmpdir={root}</listen>
+<auth>EXTERNAL</auth><policy context="default"><allow send_destination="*" eavesdrop="true"/><allow eavesdrop="true"/><allow own="*"/></policy></busconfig>''')
     for display in range(300, 400):
         with socket.socket() as probe:
             try:

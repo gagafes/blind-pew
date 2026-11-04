@@ -2,12 +2,12 @@
 set -eu
 test_root=$(mktemp -d)
 trap 'rm -rf "$test_root"' EXIT
-cat > "$test_root/bus.conf" <<'EOF'
+cat > "$test_root/bus.conf" <<EOF
 <!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-Bus Bus Configuration 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
 <busconfig>
   <type>session</type>
-  <listen>tcp:host=127.0.0.1,port=0,family=ipv4</listen>
-  <auth>ANONYMOUS</auth><allow_anonymous/>
+  <listen>unix:tmpdir=$test_root</listen>
+  <auth>EXTERNAL</auth>
   <policy context="default">
     <allow send_destination="*" eavesdrop="true"/>
     <allow eavesdrop="true"/><allow own="*"/>
