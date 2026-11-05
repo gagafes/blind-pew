@@ -11,8 +11,10 @@ main=GLib.MainContext.default()
 def wait(predicate):
     end=time.monotonic()+4
     while time.monotonic()<end:
-        while main.pending():main.iteration(False)
-        if predicate():return
+        while main.pending():
+            main.iteration(False)
+        if predicate():
+            return
         time.sleep(.005)
     raise AssertionError('GNOME bridge timed out')
 
@@ -46,12 +48,14 @@ try:
     backend.activate(('ibus','blind-pew:ua:de'),lambda *v:replies.append(v))
     wait(lambda: replies and changes[-1]==('ibus','blind-pew:ua:de'))
     assert replies[-1]==(True,'')
-    state[:]=['xkb','de'];emit()
+    state[:]=['xkb','de']
+    emit()
     wait(lambda: changes[-1]==('xkb','de'))
     hold = True
     backend.refresh()
     wait(lambda: pending)
-    state[:] = ['xkb', 'us']; emit()
+    state[:] = ['xkb', 'us']
+    emit()
     wait(lambda: changes[-1] == ('xkb', 'us'))
     invocation, snapshot = pending.pop()
     invocation.return_value(GLib.Variant('(ss)', snapshot))
@@ -59,7 +63,8 @@ try:
     GLib.timeout_add(100, lambda: (marker.append(True), False)[1])
     wait(lambda: marker)
     assert changes[-1] == ('xkb', 'us'), 'Stale GetState overwrote a newer source signal'
-    state[:] = ['', '']; emit()
+    state[:] = ['', '']
+    emit()
     wait(lambda: changes[-1] is None)
     print('PASS real D-Bus: global source read, activation and external source changes')
     print('PASS delayed GNOME state reply cannot overwrite a newer source change')

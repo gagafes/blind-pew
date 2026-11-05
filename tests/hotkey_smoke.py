@@ -14,7 +14,8 @@ assert os.environ.get('GSETTINGS_BACKEND') == 'memory'
 os.environ['XDG_CURRENT_DESKTOP'] = 'XFCE'
 hotkey._xfset(hotkey.XFCE_KEY, 'original-command')
 hotkey._xfset(hotkey.XFCE_WM_KEY, 'original-window-action')
-hotkey.install(); hotkey.install()
+hotkey.install()
+hotkey.install()
 assert hotkey._xfget(hotkey.XFCE_KEY) == hotkey.COMMAND
 assert hotkey._xfget(hotkey.XFCE_WM_KEY) == ''
 assert config.load()['hotkey_backup']['xfce'] == {
@@ -64,7 +65,8 @@ with tempfile.TemporaryDirectory() as tmp:
         personal.set_string('binding', 'F12')
         personal.set_string('command', 'original-command')
         parent.set_strv('custom-keybindings', [original_path])
-        hotkey.install(); hotkey.install()
+        hotkey.install()
+hotkey.install()
         own = custom(hotkey.GNOME_PATH)
         assert own.get_string('binding') == 'F12'
         assert own.get_string('command') == hotkey.COMMAND
