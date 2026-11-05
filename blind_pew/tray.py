@@ -1,5 +1,8 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Andrey Popovich
+# The import order is intentional: GI versions, runtime checks or sys.path
+# bootstrap must precede importing their dependent modules.
+# ruff: noqa: E402
 """SNI/AppIndicator on panels and an XEmbed tray icon on X11."""
 import gi
 gi.require_version('Gtk', '3.0')

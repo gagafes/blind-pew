@@ -1,5 +1,8 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Andrey Popovich
+# The import order is intentional: GI versions, runtime checks or sys.path
+# bootstrap must precede importing their dependent modules.
+# ruff: noqa: E402
 """IBus adapter. It never hooks devices, polls keys, or reads surrounding text."""
 import itertools
 import signal

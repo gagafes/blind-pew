@@ -1,5 +1,8 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Andrey Popovich
+# The import order is intentional: GI versions, runtime checks or sys.path
+# bootstrap must precede importing their dependent modules.
+# ruff: noqa: E402
 """About text follows the actual system locale, including compiled catalogs."""
 import os
 from unittest.mock import patch

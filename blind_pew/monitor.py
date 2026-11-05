@@ -1,5 +1,8 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Andrey Popovich
+# The import order is intentional: GI versions, runtime checks or sys.path
+# bootstrap must precede importing their dependent modules.
+# ruff: noqa: E402
 """Event-driven active input-source monitor."""
 import gi
 gi.require_version('IBus', '1.0')
