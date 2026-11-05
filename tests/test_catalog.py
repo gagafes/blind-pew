@@ -9,7 +9,8 @@ class Catalogue(unittest.TestCase):
         self.assertEqual(set(profiles()), set(PROFILE_ORDER))
         self.assertEqual(len({p['language'] for p in profiles().values()}), 7)
         for unknown in ('unknown', 'invalid:source', ''):
-            with self.assertRaises(ValueError): source_for(unknown)
+            with self.assertRaises(ValueError):
+                source_for(unknown)
 
     def test_country_tracks_global_source(self):
         for ident, expected in [('ru','RU'),('ua','UA'),('be','BY'),('li','LT'),('ge','GE'),('am','AM'),('il','IL')]:

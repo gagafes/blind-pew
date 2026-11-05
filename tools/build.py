@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Andrey Popovich
+# The import order is intentional: GI versions, runtime checks or sys.path
+# bootstrap must precede importing their dependent modules.
+# ruff: noqa: E402
 """Build a small architecture-independent .deb without downloading anything."""
 import gzip
 import hashlib
@@ -12,7 +15,8 @@ import shutil
 import subprocess
 import sys
 import tempfile
-import xml.etree.ElementTree as ET
+# This builder only creates and serializes our own XML; it never parses input XML.
+import xml.etree.ElementTree as ET  # nosemgrep: python.lang.security.use-defused-xml.use-defused-xml
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))

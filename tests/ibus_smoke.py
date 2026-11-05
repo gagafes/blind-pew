@@ -1,6 +1,9 @@
 #!/usr/bin/python3
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Andrey Popovich
+# The import order is intentional: GI versions, runtime checks or sys.path
+# bootstrap must precede importing their dependent modules.
+# ruff: noqa: E402
 """Real IBus/D-Bus smoke test. Run under tests/run_ibus_smoke.sh after install."""
 import time
 import gi

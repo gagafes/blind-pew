@@ -21,7 +21,8 @@ class Languages(unittest.TestCase):
                  ({'LANG':'uk_UA.UTF-8'},'uk'), ({'LC_ALL':'C.UTF-8','LANG':'ru_RU'},'en'),
                  ({'LANG':'POSIX'},'en'), ({},'en')]
         for env, expected in cases:
-            with self.subTest(env=env): self.assertEqual(i18n.resolve(environ=env), expected)
+            with self.subTest(env=env):
+                self.assertEqual(i18n.resolve(environ=env), expected)
 
     def test_aliases_and_serbian_scripts(self):
         for value, expected in [('iw_IL','he'),('ji','yi'),('no_NO','nb'),('mo','ro'),
@@ -44,7 +45,8 @@ class Languages(unittest.TestCase):
             catalog=messages(language)
             mo=gettext.GNUTranslations(io.BytesIO(compile_mo(catalog)))
             for key,value in catalog.items():
-                if key: self.assertEqual(mo.gettext(key),value)
+                if key:
+                    self.assertEqual(mo.gettext(key),value)
             for _,profile,base in engines():
                 self.assertEqual(mo.gettext(i18n.engine_title(profile['id'],base,'en')),
                                  i18n.engine_title(profile['id'],base,language))

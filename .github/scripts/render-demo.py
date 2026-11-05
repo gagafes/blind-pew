@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Andrey Popovich
+# The import order is intentional: GI versions, runtime checks or sys.path
+# bootstrap must precede importing their dependent modules.
+# ruff: noqa: E402
 """Render an illustrative GIF using actual Composer output, not a desktop recording.
 
 Development dependencies: Pillow and the distro fonts-dejavu-core package.
