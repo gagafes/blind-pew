@@ -66,7 +66,7 @@ with tempfile.TemporaryDirectory() as tmp:
         personal.set_string('command', 'original-command')
         parent.set_strv('custom-keybindings', [original_path])
         hotkey.install()
-hotkey.install()
+        hotkey.install()
         own = custom(hotkey.GNOME_PATH)
         assert own.get_string('binding') == 'F12'
         assert own.get_string('command') == hotkey.COMMAND
