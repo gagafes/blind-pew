@@ -1,6 +1,6 @@
 # GitHub statistics — gagafes/blind-pew
 
-**Updated (UTC):** 2026-11-06T07:25:09+00:00  
+**Updated (UTC):** 2026-11-06T07:27:11+00:00  
 **Traffic API:** not configured (TRAFFIC_READ_TOKEN missing)
 
 ## Monthly graphs
@@ -15,7 +15,7 @@
 
 | Month (UTC) | Views | Clones | Observed new downloads |
 |---|---:|---:|---:|
-| 2026-11 | 0 | 0 | 0 |
+| 2026-11 | — | — | — |
 
 ## Release assets: current download counters
 
