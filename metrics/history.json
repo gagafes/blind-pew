@@ -1,0 +1,24 @@
+{
+  "downloads": {
+    "2026-11-06": {
+      "710547645": {
+        "downloads": 10,
+        "name": "blind-pew_0.1.0-2_all.deb",
+        "release": "v0.1.0-2"
+      },
+      "710547647": {
+        "downloads": 2,
+        "name": "SHA256SUMS",
+        "release": "v0.1.0-2"
+      }
+    }
+  },
+  "repository": "gagafes/blind-pew",
+  "schema": 1,
+  "traffic": {
+    "clones": {},
+    "views": {}
+  },
+  "traffic_status": "not configured (TRAFFIC_READ_TOKEN missing)",
+  "updated_at": "2026-11-06T07:25:09+00:00"
+}
