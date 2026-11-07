@@ -1,7 +1,7 @@
 # GitHub statistics — gagafes/blind-pew
 
-**Updated (UTC):** 2026-11-07T07:14:25+00:00  
-**Traffic API:** not configured (TRAFFIC_READ_TOKEN missing)
+**Updated (UTC):** 2026-11-07T07:53:54+00:00  
+**Traffic API:** ERROR — see GitHub Actions log
 
 ## Monthly graphs
 
