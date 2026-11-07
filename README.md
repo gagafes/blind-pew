@@ -21,9 +21,6 @@ Seven languages · eight profiles · QWERTY / QWERTZ · works offline.
 
 [Latest release](https://github.com/gagafes/blind-pew/releases/latest) · [Install](#install-and-use) · [Report a bug](https://github.com/gagafes/blind-pew/issues)
 
-![Belarusian and Ukrainian transliteration with ordinary input between examples](docs/marketing/transliteration-demo.gif)
-
-*Illustration using actual converter output; not a desktop recording. F12 and the tray wheel toggle the selected profile.*
 
 ## Screenshots
 
