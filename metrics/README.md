@@ -1,6 +1,6 @@
 # GitHub statistics — gagafes/blind-pew
 
-**Updated (UTC):** 2026-11-11T04:14:32+00:00  
+**Updated (UTC):** 2026-11-12T04:13:24+00:00  
 **Traffic API:** active
 
 ## Monthly graphs
@@ -15,14 +15,14 @@
 
 | Month (UTC) | Views | Clones | Observed new downloads |
 |---|---:|---:|---:|
-| 2026-11 | 24 | 523 | 0 |
+| 2026-11 | 26 | 550 | 1 |
 | 2026-10 | 3 | 0 | — |
 
 ## Release assets: current download counters
 
 | Release | Asset | Downloads |
 |---|---|---:|
-| v0.1.0-2 | blind-pew_0.1.0-2_all.deb | 10 |
+| v0.1.0-2 | blind-pew_0.1.0-2_all.deb | 11 |
 | v0.1.0-2 | SHA256SUMS | 2 |
 
 ## Raw data and limitations
