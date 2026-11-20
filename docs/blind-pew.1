@@ -1,22 +1,24 @@
 .\" SPDX-License-Identifier: MIT
 .\" Copyright (c) 2026 Andrey Popovich
-.TH BLIND-PEW 1 "November 2026" "Blind Pew 0.1.0" "User Commands"
+.TH BLIND-PEW 1 "November 2026" "Blind Pew" "User Commands"
 .SH NAME
 blind-pew \- offline transliteration and input-source switching
 .SH SYNOPSIS
-.B blind-pew
-.RI [ setup | doctor | list | toggle | disconnect ]
-.br
-.B blind-pew convert
-.RB [ --profile " PROFILE" ]
-.RB [ --reverse ]
-.br
-.B blind-pew
-.RB [ --version | --help ]
+.SY blind-pew
+.RI "[setup | doctor | list | toggle | disconnect]"
+.YS
+.SY "blind-pew convert"
+.OP \-\-profile PROFILE
+.OP \-\-reverse
+.YS
+.SY blind-pew
+.RI "[\-\-version | \-\-help]"
+.YS
 .SH DESCRIPTION
 Blind Pew provides IBus transliteration for Belarusian, Ukrainian, Lithuanian,
-Georgian, Armenian, Russian and Hebrew on Debian/Ubuntu with GNOME or Xfce.
+Georgian, Armenian, Russian, Hebrew and Arabic on Debian/Ubuntu with GNOME or Xfce.
 The settings window selects a profile and QWERTY or QWERTZ base.
+The input table lists the explicit keystrokes for each profile.
 F12 and vertical scrolling over the tray toggle the selected transliteration
 and the previous ordinary input source while the application is running.
 .SH COMMANDS
@@ -43,10 +45,11 @@ Read standard input and write transliterated text to standard output.
 This command works without a graphical session or an IBus daemon.
 .TP
 .BI "\-\-profile " PROFILE
-Converter profile: be, ua, li, ge, am, ru, rude or il. Default: ru.
+Converter profile: be, ua, li, ge, am, ru, rude, il or ar. Default: ru.
 .TP
 .B \-\-reverse
-Convert the selected script to Latin characters.
+Convert the selected script to Latin characters one character at a time.
+Adjacent letters can merge into a digraph when converting back.
 .SH FILES
 .TP
 .I ~/.config/blind-pew/settings.json

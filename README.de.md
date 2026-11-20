@@ -3,13 +3,12 @@
 [Беларуская](README.be.md) · [Українська](README.uk.md) · [Deutsch](README.de.md) · [Русский](README.ru.md) · [English](README.md)
 
 <p align="center">
-  <img src="docs/blind-pew-logo.png" alt="Blїnd Pew" width="180">
+  <img src="docs/blind-pew-logo.png" alt="Blind Pew" width="180">
 </p>
 
-**0.1.0 · Debian 13 · Ubuntu 24.04 · XFCE / GNOME · MIT**
+**0.2.0 · Debian 13 · Ubuntu 24.04 · XFCE / GNOME · MIT**
 
-**[DEB 0.1.0-2 für Debian / Ubuntu herunterladen](https://github.com/gagafes/blind-pew/releases/download/v0.1.0-2/blind-pew_0.1.0-2_all.deb)**
-[SHA-256-Prüfsumme](https://github.com/gagafes/blind-pew/releases/download/v0.1.0-2/SHA256SUMS)
+**[Blind Pew für Debian / Ubuntu herunterladen](https://github.com/gagafes/blind-pew/releases/tag/v0.2.0-1)**
 
 Ein kleines Programm zur Offline-Transliteration. Sprache auswählen und
 die Transliteration mit **F12** oder dem **Mausrad über dem Symbol im
@@ -40,18 +39,24 @@ GNOME 46 / Wayland unter Ubuntu 24.04 mit englischer Programmoberfläche.
 | Russisch | `sh → ш`, `zh → ж`, `shh → щ` |
 | Russisch, DE-Regeln | `w → в`, `v → ф`, `tsch → ч` |
 | Hebräisch | `sh → ש`, `ms → ם`, `ks → ך` |
+| Arabisch (phonetisch) | `sh → ش`, `.3 → ع`, `.7 → ح` |
 
-Alle acht Profile unterstützen **QWERTY** und **QWERTZ**.
-Die Zeichenzuordnungen entsprechen den funktionalen Eingabetabellen von
+Alle neun Profile unterstützen **QWERTY** und **QWERTZ**.
+Acht Profile verwenden die funktionalen Eingabetabellen von
 [Translit.ru](https://translit.ru/). Blind Pew ist ein unabhängiges Projekt;
 siehe [Angaben zu den Referenzen](docs/REFERENCE.md).
 
+Für Arabisch lateinische Kleinbuchstaben verwenden, etwa `slam → سلام` oder
+`mr.7ba → مرحبا`. `.2` steht für Hamza, `.f`, `.k` und `.u` für kurze Vokale.
+Zahlen wie `42` und `3.7` bleiben erhalten. `+.7` ergibt wörtlich `.7`, und
+`s+h` erzeugt zwei getrennte Buchstaben.
+
 ## Installation und Verwendung
 
-DEB herunterladen, ein Terminal im Downloadordner öffnen und ausführen:
+Das DEB und `SHA256SUMS` von der Release-Seite herunterladen. Einen Ordner öffnen, der nur das heruntergeladene Blind-Pew-Paket und seine Prüfsummendatei enthält. Dort die folgenden Befehle ausführen:
 
 ~~~sh
-sudo apt install ./blind-pew_0.1.0-2_all.deb
+sha256sum --check SHA256SUMS && sudo apt install ./blind-pew_0.2.0-1_all.deb
 ~~~
 
 Von der grafischen Sitzung abmelden und erneut anmelden. **Blind Pew**
@@ -69,7 +74,8 @@ Einstellungen mit „Anwenden“ aktivieren. Schließen und Minimieren verbergen
 das Fenster im Benachrichtigungsbereich. Ist dieser nicht verfügbar, bleibt
 das Fenster zugänglich.
 
-SVG-Symbole zeigen den aktuellen Ländercode: BY, UA, LT, GE, AM, RU oder IL.
+Der Benachrichtigungsbereich zeigt den Code der aktiven Eingabequelle. Das arabische Profil verwendet `ARA`.
+Ist kein Code verfügbar, erscheint das Tastatursymbol des Desktops.
 F12 funktioniert, solange Blind Pew läuft. Beim Beenden werden die
 gespeicherten Tastenkürzel und Eingabeeinstellungen wiederhergestellt,
 sofern sie nicht unabhängig davon geändert wurden.
@@ -129,7 +135,7 @@ blind-pew list
 printf '%s\n' "Ukrai'na je g'" | blind-pew convert --profile ua
 ~~~
 
-Konverterprofile: `be`, `ua`, `li`, `ge`, `am`, `ru`, `rude`, `il`.
+Konverterprofile: `be`, `ua`, `li`, `ge`, `am`, `ru`, `rude`, `il`, `ar`.
 Mit `--reverse` wird in lateinische Zeichen umgewandelt.
 Die Einstellungen liegen in `~/.config/blind-pew/settings.json`
 bzw. unter `XDG_CONFIG_HOME`.

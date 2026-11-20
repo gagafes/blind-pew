@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 Andrey Popovich
 import argparse
+import os
 import sys
 from . import __version__, config, i18n
 from .i18n import tr
@@ -30,10 +31,12 @@ def main():
         elif args.command == 'list':
             for name, profile, base in engines():
                 print(name, '\t', profile_title(profile['id']), 'QWERTZ' if base == 'de' else 'QWERTY')
+            sys.stdout.flush()
         elif args.command == 'convert':
             chunks = iter(lambda: sys.stdin.read(8192), '')
             for text in convert_chunks(chunks, args.profile, args.reverse):
                 sys.stdout.write(text)
+            sys.stdout.flush()
         elif args.command == 'doctor':
             from .integration import doctor
             return doctor()
@@ -49,6 +52,11 @@ def main():
         else:
             from .setup import run
             return run()
+    except BrokenPipeError:
+        # Prevent a second failed flush during interpreter shutdown.
+        with open(os.devnull, 'wb') as sink:
+            os.dup2(sink.fileno(), sys.stdout.fileno())
+        return 1
     except (ImportError, ValueError, RuntimeError, OSError) as error:
         print('Blind Pew:', error, file=sys.stderr)
         return 1

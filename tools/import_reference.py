@@ -55,6 +55,9 @@ def extract_tables(path):
                 reference_sha256=hashlib.sha256(path.read_bytes()).hexdigest())
 
 
+REFERENCE_PROFILES = frozenset(('be', 'ua', 'li', 'ge', 'am', 'ru', 'rude', 'il'))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('reference_directory', type=Path)
@@ -64,6 +67,8 @@ def main():
     data = json.loads(args.profiles.read_text(encoding='utf-8'))
     count = 0
     for profile in data['profiles']:
+        if profile['id'] not in REFERENCE_PROFILES:
+            continue
         page = args.reference_directory / (profile['id'] + '.html')
         if page.is_file():
             profile.update(extract_tables(page))

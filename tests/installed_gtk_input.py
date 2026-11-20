@@ -43,6 +43,19 @@ def pump(seconds=0.25):
         time.sleep(0.005)
 
 
+def xdotool(*args):
+    # GTK must keep processing events while xdotool types.
+    process = subprocess.Popen(['xdotool', *args])
+    while process.poll() is None:
+        pump(0.02)
+    assert process.returncode == 0
+    pump(0.4)
+
+
+def type_text(text):
+    xdotool('type', '--clearmodifiers', '--delay', '45', text)
+
+
 pump(1)
 assert bus.is_connected(), 'Installed test cannot connect to its private IBus daemon'
 subprocess.run(['xdotool', 'search', '--name', '^Blind Pew installed typing test$',
@@ -52,26 +65,33 @@ for name, text, expected in (
     ('blind-pew:ru:us', 'Privet shh ', 'Привет щ '),
     ('blind-pew:ua:us', "Ukrai'na je g' ", 'Україна є ґ '),
     ('blind-pew:rude:de', 'sch tsch ei w v ', 'ш ч ай в ф '),
+    ('blind-pew:ar:us', "ID-42 mr.7ba 3.7 ", "ID-42 مرحبا 3.7 "),
 ):
     entry.set_text('')
     assert bus.set_global_engine(name), name
     pump(0.5)
-    # Run asynchronously: GTK must keep processing events while xdotool types.
-    process = subprocess.Popen(['xdotool', 'type', '--clearmodifiers', '--delay', '45', text])
-    while process.poll() is None:
-        pump(0.02)
-    assert process.returncode == 0
-    pump(0.4)
+    type_text(text)
     assert entry.get_text() == expected, (sys.argv[1], name, entry.get_text(), expected)
     print('PASS real GTK', sys.argv[1], name, flush=True)
+entry.set_text('ID-42 ')
+entry.set_position(-1)
+type_text('slam .')
+assert entry.get_text() == 'ID-42 سلام ', entry.get_text()
+xdotool('key', 'BackSpace')
+type_text('7 sh ')
+assert entry.get_text() == 'ID-42 سلام 7 ش ', entry.get_text()
+entry.set_position(2)
+xdotool('key', 'Right')
+assert entry.get_position() == 3, entry.get_position()
+type_text('b ')
+assert entry.get_text() == 'ID-ب 42 سلام 7 ش ', entry.get_text()
+print('PASS GTK', sys.argv[1], 'Arabic Backspace and cursor movement in mixed text', flush=True)
+
 entry.set_text('')
 entry.set_input_purpose(Gtk.InputPurpose.PASSWORD)
 entry.set_visibility(False)
 pump()
-process = subprocess.Popen(['xdotool', 'type', '--clearmodifiers', '--delay', '45', 'secret'])
-while process.poll() is None:
-    pump(0.02)
-pump()
+type_text('secret')
 assert entry.get_text() == 'secret', 'Password text was transliterated'
 print('PASS GTK', sys.argv[1], 'password field bypass', flush=True)
 window.destroy()

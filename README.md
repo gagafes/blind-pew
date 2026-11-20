@@ -1,26 +1,22 @@
 # Blind Pew
 
-**Offline transliteration for Linux. Toggle with F12.**
-
 [Беларуская](README.be.md) · [Українська](README.uk.md) · [Deutsch](README.de.md) · [Русский](README.ru.md) · [English](README.md)
 
 <p align="center">
-  <img src="docs/blind-pew-logo.png" alt="Blїnd Pew" width="180">
+  <img src="docs/blind-pew-logo.png" alt="Blind Pew" width="180">
 </p>
 
-**0.1.0 · Debian 13 · Ubuntu 24.04 · XFCE / GNOME · MIT**
+**0.2.0 · Debian 13 · Ubuntu 24.04 · XFCE / GNOME · MIT**
 
-**[Download DEB 0.1.0-2 for Debian / Ubuntu](https://github.com/gagafes/blind-pew/releases/download/v0.1.0-2/blind-pew_0.1.0-2_all.deb)**
-[SHA-256 checksum](https://github.com/gagafes/blind-pew/releases/download/v0.1.0-2/SHA256SUMS)
+**[Download Blind Pew for Debian / Ubuntu](https://github.com/gagafes/blind-pew/releases/tag/v0.2.0-1)**
 
 A small offline transliteration switcher. Choose a language and use **F12**
 or the **mouse wheel over the tray icon** to turn transliteration on or off.
 The active source applies globally to applications connected to IBus.
 
-Seven languages · eight profiles · QWERTY / QWERTZ · works offline.
+Eight languages · nine profiles · QWERTY / QWERTZ.
 
-[Latest release](https://github.com/gagafes/blind-pew/releases/latest) · [Install](#install-and-use) · [Report a bug](https://github.com/gagafes/blind-pew/issues)
-
+[Install](#install-and-use) · [Report a bug](https://github.com/gagafes/blind-pew/issues)
 
 ## Screenshots
 
@@ -46,17 +42,23 @@ GNOME 46 / Wayland on Ubuntu 24.04, with the interface set to English.
 | Russian | `sh → ш`, `zh → ж`, `shh → щ` |
 | Russian, DE rules | `w → в`, `v → ф`, `tsch → ч` |
 | Hebrew | `sh → ש`, `ms → ם`, `ks → ך` |
+| Arabic (phonetic) | `sh → ش`, `.3 → ع`, `.7 → ح` |
 
-All eight profiles support **QWERTY** and **QWERTZ**. The character mappings follow
-the functional input tables of [Translit.ru](https://translit.ru/).
+All nine profiles support **QWERTY** and **QWERTZ**. Eight profiles follow the
+functional input tables of [Translit.ru](https://translit.ru/).
 Blind Pew is an independent project; see [reference information](docs/REFERENCE.md).
+
+Use lowercase Latin keys for Arabic. Try `slam → سلام` or `mr.7ba → مرحبا`.
+Type `.2` for hamza and `.f`, `.k` or `.u` for short vowels. Numbers such as
+`42` and `3.7` are preserved. Type `+.7` for a literal `.7` or `s+h` for
+separate letters. See **Input table** for all mappings.
 
 ## Install and use
 
-Download the DEB, open a terminal in its folder and run:
+Download the DEB and `SHA256SUMS` from the release page. In a directory containing only that Blind Pew DEB and its checksum file, run:
 
 ~~~sh
-sudo apt install ./blind-pew_0.1.0-2_all.deb
+sha256sum --check SHA256SUMS && sudo apt install ./blind-pew_0.2.0-1_all.deb
 ~~~
 
 Log out and back into your desktop session, then open **Blind Pew**
@@ -73,8 +75,9 @@ Horizontal scrolling is ignored. Choose another language in Settings and
 select Apply. Closing or minimizing the window hides it in the tray.
 If no tray is available, the window stays accessible.
 
-The tray uses SVG icons and shows the active country code:
-BY, UA, LT, GE, AM, RU or IL. F12 works while Blind Pew is running.
+The tray shows the active input source code. The Arabic profile uses `ARA`.
+When the code is unavailable, Blind Pew uses the desktop's keyboard icon.
+F12 works while Blind Pew is running.
 Quitting restores the saved shortcut and input settings, unless you have
 changed them independently.
 
@@ -132,8 +135,9 @@ blind-pew list
 printf '%s\n' "Ukrai'na je g'" | blind-pew convert --profile ua
 ~~~
 
-Converter profiles: `be`, `ua`, `li`, `ge`, `am`, `ru`, `rude`, `il`.
-Use `--reverse` for conversion to Latin characters.
+Converter profiles: `be`, `ua`, `li`, `ge`, `am`, `ru`, `rude`, `il`, `ar`.
+Use `--reverse` for character-by-character conversion to Latin characters.
+Converting the result back can merge adjacent letters into a digraph.
 Preferences are stored in `~/.config/blind-pew/settings.json`
 (or under `XDG_CONFIG_HOME`).
 

@@ -139,7 +139,7 @@ def exercise():
         wait_for(lambda: app.window is not None and not app.starting)
         assert len(starts) == 1
         assert app.window.get_visible()
-        assert app.window.get_icon_name() == 'blind-pew'
+        assert app.window.get_icon_name() == 'input-keyboard'
         for mode, expected in [('be', 'Прывітанне! ў і ё э'),
                                ('li', 'Labas! ą č ę ė į š ų ū ž'),
                                ('ua', 'Привіт! Україна є ґ'),
@@ -155,6 +155,10 @@ def exercise():
                  app.window.result.get_allocated_width() / 2)
         table = app.window.table.get_buffer()
         assert 'א' in table.get_text(table.get_start_iter(), table.get_end_iter(), True)
+        app.window.mode.set_active_id('ar')
+        assert app.window.result.get_text() == 'سلام مرحبا ش خ غ ع ح'
+        assert app.window.result.get_direction() == Gtk.TextDirection.RTL
+        assert '.7' in table.get_text(table.get_start_iter(), table.get_end_iter(), True)
         app.window.preview.set_text('my own text')
         app.window.mode.set_active_id('ua')
         assert app.window.preview.get_text() == 'my own text'
@@ -162,12 +166,12 @@ def exercise():
         assert app.window.result.get_xalign() == 0
         app.window.preview.set_text('')
         app.window.mode.set_active_id('il')
-        print('PASS transliteration previews; Hebrew RTL/table; preserve user-entered text')
+        print('PASS transliteration previews; Hebrew and Arabic RTL/tables; preserve user-entered text')
         assert app.window.hint.get_text() == 'F12 — ' + i18n.tr('Toggle transliteration')
         assert Gio.Settings.new('org.freedesktop.ibus.general.hotkey').get_strv('triggers') == [], app.window.status.get_text()
         assert hotkey._xfget(hotkey.XFCE_KEY) == hotkey.COMMAND
         assert Gio.Settings.new('org.freedesktop.ibus.general').get_boolean('use-global-engine')
-        assert len(app.window.mode.get_model()) == 8  # 7 languages + Russian DE rules
+        assert len(app.window.mode.get_model()) == len(PROFILE_ORDER)
         app.window.mode.set_active_id('ua')
         app.window.base.set_active_id('de')
         app.window.preview.set_text("my own text")
@@ -198,8 +202,10 @@ def exercise():
         assert app.window.about and app.window.about.get_visible()
         app.window.about.close()
         wait_for(lambda: app.window.about is None)
+        hotkey._xfset(hotkey.XFCE_KEY, 'new-user-command')
         app._started(startup.Result(True, False, 'Custom configuration preserved'))
         assert app.window.status.get_text() == 'Custom configuration preserved'
+        assert hotkey._xfget(hotkey.XFCE_KEY) == 'new-user-command'
         print('PASS translated About: button/tray access, one dialog, live language, RTL and close; startup diagnostics')
         print('PASS transliteration-only UI; live German/Ukrainian/Hebrew/system language; input state preserved')
         assert not app.tray.available()
@@ -247,6 +253,13 @@ def exercise():
         assert not cached.is_symlink()
         assert cached.read_text().startswith('<svg')
         print('PASS tray cache symlink replaced without touching target')
+        with patch('blind_pew.tray.tempfile.mkstemp', side_effect=OSError('Cache unavailable')):
+            app.tray.set_input('BE', 'Cache unavailable')
+        assert app.tray.country is None and app.tray.icon_path is None
+        assert app.tray.indicator.get_icon() == 'input-keyboard'
+        if app.tray.xembed:
+            assert app.tray.xembed.get_property('icon-name') == 'input-keyboard'
+        print('PASS tray cache failure resets both indicators to the standard icon')
         for name, country in [('ua', 'UA'), ('be', 'BY'), ('li', 'LT'), ('ge', 'GE'), ('am', 'AM'), ('il', 'IL')]:
             test_bus.select(f'blind-pew:{name}:us')
             wait_for(lambda: app.tray.country == country)
@@ -276,6 +289,23 @@ def exercise():
             panel.connection.call(sender, path, 'org.kde.StatusNotifierItem', 'Scroll',
                 GLib.Variant('(is)', (delta, orientation)), None, Gio.DBusCallFlags.NONE, 2000, None, done)
             wait_for(lambda: bool(replies))
+        app.window.mode.set_active_id('ar')
+        app.window.base.set_active_id('us')
+
+        def reject_source(source, done):
+            done(False, 'Source unavailable')
+        with patch.object(app.desktop, 'activate', reject_source):
+            app.window.on_add()
+        assert app.window.status.get_text() == 'Source unavailable'
+
+        test_bus.select('anthy')
+        app.activate_action('toggle', None)
+        wait_for(lambda: test_bus.name == 'blind-pew:ar:us' and not app.switches.inflight)
+        app.activate_action('toggle', None)
+        wait_for(lambda: test_bus.name == 'anthy' and not app.switches.inflight)
+        test_bus.select('xkb:de::ger')
+        print('PASS activation errors are shown and toggling restores other IBus methods')
+
         # Both directions toggle the same chosen language, including Russian DE.
         for base in ('us', 'de'):
             app.window.base.set_active_id(base)
@@ -376,4 +406,6 @@ assert not config.load()['hotkey_backup']
 assert not config.load()['session_backup']
 if errors:
     raise errors[0]
+assert hotkey._xfget(hotkey.XFCE_KEY) == 'new-user-command'
+print('PASS shutdown preserves the independently edited F12 shortcut')
 print('ALL GUI / TRAY CHECKS PASSED')

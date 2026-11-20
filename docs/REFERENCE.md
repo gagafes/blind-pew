@@ -1,7 +1,6 @@
 # Functional references
 
-The Blind Pew engine is an independently structured implementation of the input behavior documented
-by these Translit.ru pages:
+Eight Blind Pew profiles implement the input behavior documented on these Translit.ru pages.
 
 | Profile | Reference |
 |---|---|
@@ -14,8 +13,13 @@ by these Translit.ru pages:
 | Russian DE | https://translit.ru/rude |
 | Hebrew | https://translit.ru/il |
 
-[data/profiles.json](../data/profiles.json) contains the character
-correspondences, reference dates and SHA-256 hashes of the reference pages.
+[The profile data](../data/profiles.json) records the character mappings. For
+each imported profile it records the reference URL, reference date and page
+SHA-256.
+The Arabic phonetic profile is maintained directly in the project. It combines
+Latin digraphs with explicit dot-prefixed keys and is outside the Translit.ru
+importer.
+
 No website JavaScript, HTML, logos or images are distributed with Blind Pew.
 The project is not an official Translit.ru product.
 
@@ -34,7 +38,6 @@ python3 -m unittest discover -s tests -v
 The importer reads the eight known profile filenames as data without
 executing JavaScript. Review table changes and rerun desktop input checks
 before distributing a package.
-
 
 The importer extracts functional mapping data. No separate redistribution grant
 for those tables is recorded here; references and page hashes are provenance,

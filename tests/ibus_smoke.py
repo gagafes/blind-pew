@@ -28,7 +28,7 @@ for _ in range(50):
     pump(0.05)
 assert bus.is_connected(), 'No IBus connection'
 found = [e.get_name() for e in bus.list_engines() if e.get_name().startswith('blind-pew:')]
-assert len(found) == 16, found
+assert len(found) == 18, found
 ctx = bus.create_input_context('blind-pew-test')
 ctx.set_capabilities(IBus.Capabilite.PREEDIT_TEXT | IBus.Capabilite.FOCUS | IBus.Capabilite.PROPERTY)
 committed = []
@@ -66,6 +66,8 @@ def type_text(value):
 
 
 for name, text, expected in [
+    ('blind-pew:ar:us', "ID-42 mr.7ba 3.7 ", "ID-42 مرحبا 3.7 "),
+    ('blind-pew:ar:de', 'sh kh gh .3 .7 ', 'ش خ غ ع ح '),
     ('blind-pew:ru:us', 'Privet, mir! sh zh shh raj+on ', 'Привет, мир! ш ж щ район '),
     ('blind-pew:ru:de', 'y z ö ä ü ', 'ы з ё э ю '),
     ('blind-pew:rude:de', 'sch tsch ei w v ', 'ш ч ай в ф '),

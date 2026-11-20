@@ -24,8 +24,9 @@ Another program running as the same user is outside this isolation boundary.
 
 Dependencies come from Debian/Ubuntu APT repositories; none are vendored or
 installed through pip. Keep the OS updated to receive GTK, IBus, GLib and Python
-security fixes. GitHub Actions use pinned action commits, read-only repository
-permissions and checkout without persisted credentials.
+security fixes. GitHub Actions pin action commits and use read-only repository
+permissions for CI. The metrics archive and release publication workflows have
+separate write permissions for their respective tasks.
 
 CI checks source with Bandit and Pyflakes, scans Git history with Gitleaks and
 runs input/privacy, preference and installed-package regressions. These checks

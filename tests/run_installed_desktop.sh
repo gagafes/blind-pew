@@ -3,6 +3,10 @@
 # Copyright (c) 2026 Andrey Popovich
 set -euo pipefail
 # Run inside a disposable session bus; the caller supplies Xvfb for Xfce.
+case "${1:-}" in
+    gnome|xfce) ;;
+    *) echo "Usage: $0 gnome|xfce" >&2; exit 2 ;;
+esac
 : "${BLIND_PEW_DISPOSABLE_SESSION:?Run only in a disposable OS user/container; startup calls im-config}"
 mkdir -p desktop-output
 export XDG_RUNTIME_DIR
@@ -15,7 +19,7 @@ export GTK_IM_MODULE=ibus XMODIFIERS=@im=ibus
 export PYTHONPATH=/usr/share/blind-pew
 export LIBGL_ALWAYS_SOFTWARE=1
 export LP_NUM_THREADS=2
-export GSK_RENDERER=cairo GTK_A11Y=none NO_AT_BRIDGE=1
+export GSK_RENDERER=cairo GTK_A11Y=none NO_AT_BRIDGE=1 GIO_USE_VFS=local GTK_USE_PORTAL=0
 unset GSETTINGS_BACKEND IBUS_USE_PORTAL
 export IBUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/ibus"
 pids=()
@@ -39,7 +43,7 @@ ibus-daemon --address="$IBUS_ADDRESS" --panel disable --cache refresh \
     > "desktop-output/ibus-$1.log" 2>&1 &
 ibus_pid=$!
 pids+=("$ibus_pid")
-for attempt in $(seq 1 40); do
+for _ in $(seq 1 40); do
     kill -0 "$ibus_pid"
     if ibus list-engine >/dev/null 2>&1; then break; fi
     sleep 0.25
@@ -59,12 +63,14 @@ if [ "$1" = gnome ]; then
         --wayland-display="$WAYLAND_DISPLAY" > desktop-output/gnome-shell.log 2>&1 &
     shell_pid=$!
     pids+=("$shell_pid")
-    for attempt in $(seq 1 40); do
+    for _ in $(seq 1 40); do
         if gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell \
             --method org.freedesktop.DBus.Peer.Ping >/dev/null 2>&1; then break; fi
         kill -0 "$shell_pid"
         sleep 1
     done
+    gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell \
+        --method org.freedesktop.DBus.Peer.Ping >/dev/null
 else
     dbus-update-activation-environment DISPLAY XAUTHORITY
     mkdir -p "$XDG_CONFIG_HOME/xfce4/xfconf/xfce-perchannel-xml"

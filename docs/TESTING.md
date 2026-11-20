@@ -22,13 +22,14 @@ sh tests/run_protocol_smoke.sh
 desktop-file-validate assets/blind-pew.desktop
 node --input-type=module --check < assets/gnome-extension/extension.js
 /usr/bin/python3 tools/build.py
-lintian --fail-on error dist/*.deb
+deb=$(/usr/bin/python3 tools/build.py --print-package-name)
+lintian --fail-on error "dist/$deb"
 ```
 
 Run GUI checks sequentially. They isolate configuration, cache, GSettings,
 the session bus and display. Xvfb uses local Xauthority authentication with
-TCP listening disabled. The unit/protocol suite checks all eight profiles,
-16 engine IDs, composition boundaries, backspace, focus/reset, modifiers and
+TCP listening disabled. The unit/protocol suite checks all nine profiles,
+18 engine IDs, composition boundaries, backspace, focus/reset, modifiers and
 Password/PIN/Private input. Preferences are tested against oversized/deep JSON,
 invalid text, FIFOs, symlinks, interrupted writes and malformed shortcut backups.
 Streaming tests include long input without newlines and every chunk boundary.
@@ -38,7 +39,7 @@ the panel and GNOME bridge. It covers live translation, RTL preview, window/tray
 lifecycle, About, rapid source switching, stale replies, settings rollback and
 shortcut restoration. These simulated services are distinct from the installed
 desktop checks below. All 49 interface catalogs are compiled and checked;
-that does not establish translation quality.
+automated checks cover catalog completeness and parsing.
 
 ## Installed-package CI
 
@@ -47,11 +48,11 @@ that does not establish translation quality.
 | Check | Scope |
 |---|---|
 | Source regressions | Unit, IBus protocol, GTK GUI and GNOME bridge tests |
-| Package | Build twice and compare SHA-256, Lintian errors, upgrade from 0.1.0-1, installed-file verification, removal and clean reinstall |
+| Package | Build twice and compare SHA-256, Lintian errors, upgrade from the published 0.1.0-2 package, installed-file verification, removal and clean reinstall |
 | Installed program | CLI, profile/engine registration, 49 compiled catalogs, payload/licenses and friendly headless startup failure |
-| Actual IBus daemon | All eight profiles, both bases across the test cases, committed text, Backspace, modifiers, focus changes and password bypass |
+| Actual IBus daemon | All nine profiles, both bases across the test cases, committed text, Backspace, modifiers, focus changes and password bypass |
 | Xfce desktop | Real Xfwm4, settings daemon and panel; installed application; X11 F12 key event; tray callbacks, About, live language and restoration on quit |
-| GTK input | Actual X11 key events through installed GTK3/GTK4 IBus modules for Russian, Ukrainian and Russian DE profiles; password-field bypass |
+| GTK input | Actual X11 key events through installed GTK3/GTK4 IBus modules for Russian, Ukrainian, Russian DE and Arabic profiles; Arabic Backspace and cursor movement in mixed text; password-field bypass |
 | GNOME Wayland | Real headless GNOME Shell and AppIndicator extension; installed bridge, source changes, toggle action, tray callbacks, About and restoration |
 | Security | Pyflakes, Bandit medium/high findings and Gitleaks over Git history |
 
@@ -63,10 +64,7 @@ captures desktop/IBus logs as workflow artifacts. See the workflow for the
 complete package prerequisites and commands.
 
 Each package artifact includes `system-packages.tsv` with the tested distribution
-versions and `SHA256SUMS`. Dependencies are supplied by APT and are not bundled
-in the DEB. Source scanners are not a CVE clearance for the entire OS, nor a
-proof that all defects have been found. Review the exact commit's CI conclusion;
-a local pass or a run for an earlier commit does not establish final CI success.
+versions and `SHA256SUMS`. Review the CI result for the exact commit being released.
 
 ## Remaining manual coverage
 
@@ -90,13 +88,13 @@ On a disposable desktop:
 ## Package inspection and reproducibility
 
 ```sh
-dpkg-deb --info dist/blind-pew_0.1.0-2_all.deb
-dpkg-deb --contents dist/blind-pew_0.1.0-2_all.deb
+deb=$(python3 tools/build.py --print-package-name)
+dpkg-deb --info "dist/$deb"
+dpkg-deb --contents "dist/$deb"
 ```
 
-The package includes 16 IBus engines, 49 catalogs, icons/logo, five READMEs,
+The package includes 18 IBus engines, 49 catalogs, the About logo, five READMEs,
 English GNOME screenshots, project/license notices and release documentation.
-Repository download links are omitted from installed documentation.
 `tools/build.py` reads the version and default build timestamp from the Debian
 changelog; `SOURCE_DATE_EPOCH` can override the timestamp. Reproducibility is
 checked with the same toolchain. Different distribution/xz versions can produce

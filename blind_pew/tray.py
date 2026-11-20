@@ -16,6 +16,8 @@ import re
 import tempfile
 from .i18n import tr
 
+DEFAULT_ICON = 'input-keyboard'
+
 
 class Tray:
     def __init__(self, show, hide, retry, quit_app, changed, about, toggle):
@@ -41,7 +43,7 @@ class Tray:
         self._item(tr('Quit'), quit_app)
         self.menu.show_all()
         self.indicator = Indicator.Indicator.new(
-            'blind-pew', 'blind-pew', Indicator.IndicatorCategory.APPLICATION_STATUS)
+            'blind-pew', DEFAULT_ICON, Indicator.IndicatorCategory.APPLICATION_STATUS)
         self.indicator.set_title('Blind Pew')
         self.indicator.set_menu(self.menu)
         self.indicator.set_status(Indicator.IndicatorStatus.PASSIVE)
@@ -49,7 +51,7 @@ class Tray:
         self.indicator.connect('scroll-event', self._indicator_scroll)
         display = Gdk.Display.get_default()
         if display and 'X11' in display.__gtype__.name:
-            self.xembed = Gtk.StatusIcon.new_from_icon_name('blind-pew')
+            self.xembed = Gtk.StatusIcon.new_from_icon_name(DEFAULT_ICON)
             self.xembed.set_visible(False)
             self.xembed.set_tooltip_text('Blind Pew')
             self.xembed.connect('activate', lambda *_: show())
@@ -154,6 +156,12 @@ class Tray:
         self.ibus_ready = ready
         self.status_item.set_label(tr('IBus: running') if ready else tr('IBus: not running'))
 
+    def _set_default_icon(self, detail):
+        self.icon_path = None
+        self.indicator.set_icon_full(DEFAULT_ICON, detail)
+        if self.xembed:
+            self.xembed.set_from_icon_name(DEFAULT_ICON)
+
     def set_input(self, country, detail):
         if self.stopped:
             return
@@ -165,10 +173,7 @@ class Tray:
             return
         self.country = country
         if not country or not re.fullmatch(r'[A-Z]{2,4}', country):
-            self.icon_path = None
-            self.indicator.set_icon_full('blind-pew', detail)
-            if self.xembed:
-                self.xembed.set_from_icon_name('blind-pew')
+            self._set_default_icon(detail)
             return
         directory = Path(GLib.get_user_cache_dir()) / 'blind-pew' / 'icons'
         try:
@@ -195,7 +200,7 @@ class Tray:
                 self.xembed.set_from_file(self.icon_path)
         except OSError:
             self.country = None
-            self.indicator.set_icon_full('blind-pew', detail)
+            self._set_default_icon(detail)
 
     def stop(self):
         self.stopped = True

@@ -89,6 +89,8 @@ def releases(repo, token):
     while True:
         batch = request("GET", "/repos/%s/releases?per_page=100&page=%d" % (repo, page), token)
         for rel in batch:
+            if rel.get("draft"):
+                continue
             for asset in rel.get("assets", []):
                 assets[str(asset["id"])] = {
                     "release": rel["tag_name"], "name": asset["name"],
@@ -102,15 +104,12 @@ def releases(repo, token):
 
 def download_deltas(snapshots):
     seen, result = {}, {}
-    first = min(snapshots) if snapshots else ""
     for day in sorted(snapshots):
-        delta = 0
-        for asset_id, record in snapshots[day].items():
-            count = record["downloads"]
-            if asset_id in seen:
-                delta += max(0, count - seen[asset_id])
-            seen[asset_id] = count
-        result[day] = "" if day == first else delta
+        observations = snapshots[day]
+        comparable = observations.keys() & seen.keys()
+        result[day] = (sum(max(0, observations[asset]["downloads"] - seen[asset])
+                           for asset in comparable) if comparable else "")
+        seen.update((asset, record["downloads"]) for asset, record in observations.items())
     return result
 
 
@@ -150,41 +149,44 @@ def csv_report(rows):
 
 
 def monthly(rows):
-    values = defaultdict(lambda: {"views": 0, "clones": 0, "observed_new_downloads": 0})
+    values = defaultdict(lambda: {"views": None, "clones": None, "observed_new_downloads": None})
     for row in rows:
         group = values[row["date"][:7]]
         for key in group:
             if row[key] != "":
-                group[key] += int(row[key])
+                group[key] = (group[key] or 0) + int(row[key])
     return [{"month": month, **values[month]} for month in sorted(values)]
 
 
 def svg_chart(data, key, title):
     values = data[-12:]
-    maximum = max((d[key] for d in values), default=0)
+    maximum = max((d[key] for d in values if d[key] is not None), default=None)
     result = [
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 300" role="img">',
         '<rect width="820" height="300" fill="#fafafa"/>',
         '<text x="48" y="30" font-family="sans-serif" font-size="18" fill="#111827">%s</text>' % html.escape(title),
         '<line x1="48" y1="250" x2="800" y2="250" stroke="#9ca3af"/>',
     ]
-    if maximum == 0:
+    if maximum is None:
         result.append('<text x="410" y="145" text-anchor="middle" font-family="sans-serif" fill="#6b7280">No recorded data yet</text>')
     else:
         step = 750 / len(values)
         for i, data_point in enumerate(values):
             count = data_point[key]
-            bar_height = 170 * count / maximum
             x = 48 + i * step + step * 0.2
-            y = 250 - bar_height
-            result.extend([
-                '<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f" fill="#2563eb"/>' %
-                (x, y, step * 0.6, bar_height),
-                '<text x="%.1f" y="%.1f" text-anchor="middle" font-size="12" font-family="sans-serif">%s</text>' %
-                (x + step * 0.3, max(55, y - 6), count),
+            center = x + step * 0.3
+            if count is not None:
+                bar_height = 170 * count / max(1, maximum)
+                y = 250 - bar_height
+                result.extend([
+                    '<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f" fill="#2563eb"/>' %
+                    (x, y, step * 0.6, bar_height),
+                    '<text x="%.1f" y="%.1f" text-anchor="middle" font-size="12" font-family="sans-serif">%s</text>' %
+                    (center, max(55, y - 6), count),
+                ])
+            result.append(
                 '<text x="%.1f" y="271" text-anchor="middle" font-size="12" font-family="sans-serif">%s</text>' %
-                (x + step * 0.3, html.escape(data_point["month"])),
-            ])
+                (center, html.escape(data_point["month"])))
     return "\n".join(result + ["</svg>", ""])
 
 
@@ -207,15 +209,9 @@ def dashboard(history, rows):
         "|---|---:|---:|---:|",
     ]
     for d in reversed(monthly_data[-24:]):
-        has_download_delta = any(
-            r["date"].startswith(d["month"]) and r["observed_new_downloads"] != ""
-            for r in rows
-        )
-        views = str(d["views"]) if history["traffic"]["views"] else "—"
-        clones = str(d["clones"]) if history["traffic"]["clones"] else "—"
-        downloads = str(d["observed_new_downloads"]) if has_download_delta else "—"
-        lines.append("| %s | %s | %s | %s |" %
-                     (d["month"], views, clones, downloads))
+        totals = (str(d[key]) if d[key] is not None else "—"
+                  for key in ("views", "clones", "observed_new_downloads"))
+        lines.append("| " + " | ".join((d["month"], *totals)) + " |")
     download_heading = "## Release asset downloads"
     if latest_day:
         download_heading += " — last recorded on " + latest_day + " (UTC)"

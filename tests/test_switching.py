@@ -78,6 +78,16 @@ class OnOff(unittest.TestCase):
             self.assertEqual(pair.target(selected, None), native)
             self.assertEqual(pair.target(native, None), selected)
 
+    def test_toggle_returns_to_another_ibus_engine(self):
+        selected = source_for('ar')
+        pair = TogglePair(selected)
+        pair.observed(('ibus', 'xkb:us::eng'))
+        other = ('ibus', 'anthy')
+        pair.observed(other)
+        self.assertEqual(pair.target(other, None), selected)
+        pair.observed(selected)
+        self.assertEqual(pair.target(selected, ('ibus', 'xkb:us::eng')), other)
+
     def test_start_with_translit_uses_native_fallback(self):
         pair = TogglePair(source_for('ua'))
         self.assertEqual(pair.target(source_for('il'), ('xkb', 'us')), ('xkb', 'us'))
