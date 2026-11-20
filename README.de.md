@@ -8,7 +8,7 @@
 
 **0.2.0 · Debian 13 · Ubuntu 24.04 · XFCE / GNOME · MIT**
 
-**[Blind Pew für Debian / Ubuntu herunterladen](https://github.com/gagafes/blind-pew/releases/tag/v0.2.0-1)**
+**[DEB 0.2.0-1 herunterladen](https://github.com/gagafes/blind-pew/releases/download/v0.2.0-1/blind-pew_0.2.0-1_all.deb)** · [SHA256SUMS](https://github.com/gagafes/blind-pew/releases/download/v0.2.0-1/SHA256SUMS) · [Versionshinweise](https://github.com/gagafes/blind-pew/releases/tag/v0.2.0-1)
 
 Ein kleines Programm zur Offline-Transliteration. Sprache auswählen und
 die Transliteration mit **F12** oder dem **Mausrad über dem Symbol im
@@ -17,7 +17,7 @@ gilt global für Anwendungen, die IBus verwenden.
 
 ## Bildschirmfotos
 
-GNOME 46 / Wayland unter Ubuntu 24.04 mit englischer Programmoberfläche.
+Blind Pew 0.1.0 unter Ubuntu 24.04 mit GNOME 46 / Wayland und englischer Oberfläche.
 
 **Einstellungen und Transliterationsvorschau**
 

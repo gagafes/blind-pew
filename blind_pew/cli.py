@@ -16,7 +16,7 @@ def main():
     parser.add_argument('--ibus', action='store_true', help=argparse.SUPPRESS)
     commands = parser.add_subparsers(dest='command')
     commands.add_parser('setup', help=tr('Open Blind Pew'))
-    commands.add_parser('doctor', help=tr('Check and start IBus'))
+    commands.add_parser('doctor', help=tr('IBus: checking…'))
     commands.add_parser('list', help=tr('Layout'))
     commands.add_parser('disconnect', help='Remove only Blind Pew sources from your desktop')
     commands.add_parser('toggle', help=tr('Toggle transliteration'))

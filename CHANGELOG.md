@@ -1,6 +1,14 @@
 # Changelog
 
-## 0.2.0-1
+## Unreleased
+
+- Link to the published DEB and checksum from each README.
+- Fetch the checksum-pinned upgrade baseline from GitHub Releases and remove
+  old DEB copies from the source tree.
+- Retire the disabled GitHub metrics collector.
+- Correct the CLI help for the IBus diagnostic command.
+
+## 0.2.0-1 — 2026-11-20
 
 - Add offline Arabic phonetic input on QWERTY and QWERTZ. The profile supports
   explicit hamza, diacritics and dot-prefixed keys while preserving ordinary

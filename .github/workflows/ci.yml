@@ -30,6 +30,8 @@ jobs:
       DEBIAN_FRONTEND: noninteractive
       LANG: C.UTF-8
       PYTHONDONTWRITEBYTECODE: '1'
+      UPGRADE_BASELINE_VERSION: '0.1.0-2'
+      UPGRADE_BASELINE_SHA256: 2dd3c0177a11809d89a15f039d54fec3fe2775a751f3a9fa6484a8e242da28a6
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -37,7 +39,7 @@ jobs:
       - name: Install test dependencies
         run: |
           apt-get update
-          apt-get install -y --no-install-recommends python3 python3-gi libglib2.0-bin gsettings-desktop-schemas gir1.2-ibus-1.0 gir1.2-gtk-3.0 gir1.2-gtk-4.0 gir1.2-ayatanaappindicator3-0.1 ibus ibus-gtk3 ibus-gtk4 im-config xfconf libxfconf-0-3 xvfb xauth dbus-x11 desktop-file-utils nodejs lintian
+          apt-get install -y --no-install-recommends ca-certificates curl python3 python3-gi libglib2.0-bin gsettings-desktop-schemas gir1.2-ibus-1.0 gir1.2-gtk-3.0 gir1.2-gtk-4.0 gir1.2-ayatanaappindicator3-0.1 ibus ibus-gtk3 ibus-gtk4 im-config xfconf libxfconf-0-3 xvfb xauth dbus-x11 desktop-file-utils nodejs lintian
       - name: Unit, protocol and GUI regressions
         run: |
           /usr/bin/python3 -m unittest discover -s tests -v
@@ -58,6 +60,15 @@ jobs:
           /usr/bin/python3 tools/build.py
           sha256sum --check /tmp/blind-pew-first-build.sha256
           lintian --fail-on error "dist/$deb"
+      - name: Fetch and verify the published upgrade baseline
+        run: |
+          filename="blind-pew_${UPGRADE_BASELINE_VERSION}_all.deb"
+          baseline="$RUNNER_TEMP/$filename"
+          curl --proto '=https' --proto-redir '=https' --fail --show-error --silent \
+            --location --retry 3 --max-time 60 --output "$baseline" \
+            "https://github.com/gagafes/blind-pew/releases/download/v${UPGRADE_BASELINE_VERSION}/$filename"
+          printf '%s  %s\n' "$UPGRADE_BASELINE_SHA256" "$baseline" | sha256sum --check -
+          printf 'UPGRADE_BASELINE_DEB=%s\n' "$baseline" >> "$GITHUB_ENV"
       - name: Install, upgrade and exercise the packaged program
         run: |
           # Minimal Ubuntu images omit translations/manuals unless requested.
@@ -66,9 +77,14 @@ jobs:
           path-include=/usr/share/doc/blind-pew/*
           path-include=/usr/share/man/man1/blind-pew.1.gz
           EOF
-          (cd downloads && sha256sum --check SHA256SUMS)
-          apt-get install -y ./downloads/blind-pew_0.1.0-2_all.deb
+          baseline_version=$(dpkg-deb --field "$UPGRADE_BASELINE_DEB" Version)
+          candidate_version=$(dpkg-deb --field "dist/$DEB" Version)
+          test "$baseline_version" = "$UPGRADE_BASELINE_VERSION"
+          dpkg --compare-versions "$baseline_version" lt "$candidate_version"
+          apt-get install -y "$UPGRADE_BASELINE_DEB"
+          test "$(dpkg-query -W -f='${Version}' blind-pew)" = "$baseline_version"
           apt-get install -y "./dist/$DEB"
+          test "$(dpkg-query -W -f='${Version}' blind-pew)" = "$candidate_version"
           dpkg --verify blind-pew
           PYTHONPATH=/usr/share/blind-pew /usr/bin/python3 tests/installed_smoke.py
           sh tests/run_ibus_smoke.sh
@@ -94,7 +110,7 @@ jobs:
         run: |
           # Main may gain documentation after publication; release bytes remain fixed.
           /usr/bin/python3 .release-validation/tools/build.py
-          cmp .release-validation/dist/blind-pew_0.1.0-2_all.deb downloads/blind-pew_0.1.0-2_all.deb
+          cmp ".release-validation/dist/blind-pew_${UPGRADE_BASELINE_VERSION}_all.deb" "$UPGRADE_BASELINE_DEB"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: ${{ matrix.artifact }}

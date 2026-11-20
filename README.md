@@ -8,7 +8,7 @@
 
 **0.2.0 · Debian 13 · Ubuntu 24.04 · XFCE / GNOME · MIT**
 
-**[Download Blind Pew for Debian / Ubuntu](https://github.com/gagafes/blind-pew/releases/tag/v0.2.0-1)**
+**[Download DEB 0.2.0-1](https://github.com/gagafes/blind-pew/releases/download/v0.2.0-1/blind-pew_0.2.0-1_all.deb)** · [SHA256SUMS](https://github.com/gagafes/blind-pew/releases/download/v0.2.0-1/SHA256SUMS) · [Release notes](https://github.com/gagafes/blind-pew/releases/tag/v0.2.0-1)
 
 A small offline transliteration switcher. Choose a language and use **F12**
 or the **mouse wheel over the tray icon** to turn transliteration on or off.
@@ -20,7 +20,7 @@ Eight languages · nine profiles · QWERTY / QWERTZ.
 
 ## Screenshots
 
-GNOME 46 / Wayland on Ubuntu 24.04, with the interface set to English.
+Blind Pew 0.1.0 on GNOME 46 / Wayland and Ubuntu 24.04, with the interface set to English.
 
 **Settings and transliteration preview**
 

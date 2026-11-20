@@ -21,9 +21,15 @@ changes are recorded in [CHANGELOG.md](../CHANGELOG.md).
    byte contents, and publishes the matching version tag and release.
    [Publication workflow](https://github.com/gagafes/blind-pew/actions/workflows/publish-release.yml)
 5. Confirm the tag, release notes and downloads at the public release page.
-   The release contains the DEB and `SHA256SUMS`. The published v0.1.0-2
-   files in `downloads/` serve as historical CI fixtures.
+   The release contains the DEB and `SHA256SUMS`. Update all five READMEs
+   with the new DEB, checksum and release-notes links and the matching
+   installation command.
    [Releases](https://github.com/gagafes/blind-pew/releases)
+
+CI downloads the [v0.1.0-2 DEB](https://github.com/gagafes/blind-pew/releases/tag/v0.1.0-2)
+for the upgrade test and verifies its SHA-256 against the digest pinned in
+`ci.yml`. The Ubuntu job also rebuilds that release from its pinned source
+commit and compares the resulting DEB with the published download.
 
 Verify a downloaded package in its own directory:
 

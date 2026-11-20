@@ -58,7 +58,7 @@ for Blind Pew. A supplied asset or generation record alone does
 not establish worldwide trademark clearance or exclusive copyright protection.
 The logo SHA-256 is recorded in [docs/LEGAL_REVIEW.md](docs/LEGAL_REVIEW.md).
 
-The English screenshots were captured from the installed application in a real
+The English screenshots show the installed Blind Pew 0.1.0 in a
 GNOME 46 / Ubuntu 24.04 Wayland session. They include desktop UI and do not imply
 endorsement by GNOME or Canonical. System fonts/icons are rendered in screenshots,
 not redistributed as font or icon packages.
