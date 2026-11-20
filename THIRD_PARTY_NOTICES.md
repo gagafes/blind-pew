@@ -7,11 +7,12 @@ grant trademark rights, or establish ownership of externally referenced data.
 
 ## Functional transliteration references
 
-`data/profiles.json` contains 916 context/replacement rules across eight profiles,
-plus reverse mappings and metadata. The supplied `tools/import_reference.py`
+The eight Translit.ru profiles in `data/profiles.json` contain 916
+context/replacement rules, plus reverse mappings and metadata. The supplied `tools/import_reference.py`
 extracts mapping arrays from locally saved Translit.ru pages. The data records
 reference dates and page hashes; see [docs/REFERENCE.md](docs/REFERENCE.md).
-The executable JavaScript, HTML, branding and images of that site are not bundled.
+The Arabic profile uses its own table maintained in the project. The executable
+JavaScript, HTML, branding and images of Translit.ru are not bundled.
 
 The site's [terms](https://translit.ru/info/disclaimer/) describe personal,
 noncommercial site use. Its [license page](https://translit.ru/info/licenses/)
@@ -51,10 +52,9 @@ also permits inclusion of MIT code under GPL-compatible distribution terms.
 
 ## Artwork, interface text and screenshots
 
-The project archive supplies `docs/blind-pew-logo.png` and `assets/blind-pew.svg`.
+The project archive supplies `docs/blind-pew-logo.png`.
 Project creation records describe an AI-assisted pirate-logo design requested
-for Blind Pew. No stock-image source, licensed font file or third-party graphic
-is embedded in the simple SVG. A supplied asset or generation record alone does
+for Blind Pew. A supplied asset or generation record alone does
 not establish worldwide trademark clearance or exclusive copyright protection.
 The logo SHA-256 is recorded in [docs/LEGAL_REVIEW.md](docs/LEGAL_REVIEW.md).
 

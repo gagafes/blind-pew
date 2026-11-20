@@ -19,12 +19,14 @@ concurrency:
 
 jobs:
   snapshot:
-    name: Save release downloads and repository traffic
+    name: Save repository traffic and on-demand download counts
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
       - name: Validate collector
         run: python3 -m py_compile tools/collect_github_metrics.py
       - name: Store daily metrics and charts

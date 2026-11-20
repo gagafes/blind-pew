@@ -26,7 +26,7 @@ class AboutDialog(Gtk.Dialog):
         super().__init__(title=tr('About'), transient_for=parent,
                          destroy_with_parent=True, modal=True, use_header_bar=False)
         self.get_style_context().add_class('blind-pew')
-        self.set_icon_name('blind-pew')
+        self.set_icon_name('input-keyboard')
         self.set_resizable(False)
         self.add_button(tr('Close'), Gtk.ResponseType.CLOSE)
         self.connect('response', lambda dialog, _response: dialog.destroy())
@@ -60,7 +60,7 @@ class Window(Gtk.ApplicationWindow):
         self.get_style_context().add_class('blind-pew')
         self.controller = application
         self.about = None
-        self.set_icon_name('blind-pew')
+        self.set_icon_name('input-keyboard')
         self.set_default_size(700, 650)
         self.set_border_width(12)
         self.connect('delete-event', self.on_close)
@@ -77,7 +77,7 @@ class Window(Gtk.ApplicationWindow):
         title = Gtk.Label(xalign=0)
         title.set_markup('<span size="x-large" weight="bold">Blind Pew</span>')
         box.pack_start(title, False, False, 0)
-        box.pack_start(Gtk.Label(label=tr('Transliteration') + ' · ' + tr('Languages') + ': 7 · ' + tr('Offline'), xalign=0), False, False, 0)
+        box.pack_start(Gtk.Label(label=tr('Transliteration') + ' · ' + tr('Languages') + f': {len(LANGUAGE_NAMES)} · ' + tr('Offline'), xalign=0), False, False, 0)
         grid = Gtk.Grid(column_spacing=12, row_spacing=10)
         box.pack_start(grid, False, False, 0)
         self.ui_language = Gtk.ComboBoxText()
@@ -204,7 +204,6 @@ class Window(Gtk.ApplicationWindow):
             return
         try:
             self.controller.select_source(source_for(ident, base))
-            self.message(tr('Saved') + ': ' + profile_title(ident))
         except (RuntimeError, OSError, ValueError) as error:
             self.message(str(error))
 
@@ -225,6 +224,7 @@ class Application(Gtk.Application):
         self.window = self.tray = self.monitor = self.desktop = self.switches = None
         self.starting = self.closing = False
         self.last_startup = None
+        self.session_configured = False
         options = config.load()
         self.pair = TogglePair(source_for(options['favorite_profile'], options['favorite_base']))
         action = Gio.SimpleAction.new('toggle', None)
@@ -284,7 +284,8 @@ class Application(Gtk.Application):
 
     def source_changed(self, source):
         # GNOME's IBus xkb echo is not the actual desktop layout.
-        if not integration.is_gnome() or source and source[0] == 'xkb':
+        if not (integration.is_gnome() and source and
+                source[0] == 'ibus' and source[1].startswith('xkb:')):
             self.pair.observed(source)
         self.switches.observed(source)
 
@@ -306,6 +307,7 @@ class Application(Gtk.Application):
         self.pair.selected = source
         self.window.mode.set_active_id(ident)
         self.window.base.set_active_id(base)
+        self.window.message(tr('Saved') + ': ' + profile_title(ident))
         self.switches.request(source)
 
     def show_window(self):
@@ -377,7 +379,7 @@ class Application(Gtk.Application):
                 self.tray.set_ibus_status(result.ready)
             if self.monitor:
                 self.monitor.refresh()
-            if result.ready:
+            if result.ready and not self.session_configured:
                 try:
                     integration.configure_session()
                     try:
@@ -385,6 +387,7 @@ class Application(Gtk.Application):
                     except (OSError, ValueError, RuntimeError):
                         integration.restore_session()
                         raise
+                    self.session_configured = True
                 except (OSError, ValueError, RuntimeError) as error:
                     self.window.message(str(error))
             if self.desktop:

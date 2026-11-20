@@ -19,10 +19,10 @@ The source archives do not contain the full pre-import development history.
 |---|---|---|
 | Original Python/GJS | Manual source review found no bundled third-party implementation, obfuscated payload or imported website script | Public search cannot establish exclusive authorship or absence of every possible match |
 | Malferma Libro comparison | No identical blob/file in the imported Blind Pew tree and Malferma Libro tree `e39fc9c7fc2b98942bfef48afc9ebf9f945a41a7`; locale-module comparison found a longest exact Python token run of 13 before quote normalization | Short common idioms and shared locale behavior are not evidence of wholly unique code; this is a limited comparison, not a plagiarism percentage |
-| Translit.ru data | Importer extracts functional mapping arrays; the current JSON contains 916 ordered context/replacement entries across eight profiles and reverse maps | No redistribution grant for these tables was located in the site's terms/license page or supplied archives; protection and contractual scope were not legally adjudicated |
+| Translit.ru data | Importer extracts functional mapping arrays; the eight Translit.ru profiles in the JSON contain 916 ordered context/replacement entries and reverse maps | No redistribution grant for these tables was located in the site's terms/license page or supplied archives; protection and contractual scope were not legally adjudicated |
 | MIT notice | Full license and copyright retained; installed documentation and GNOME extension include the notice | The MIT grant can cover only rights the licensor has |
 | Runtime dependencies | System packages are dynamically used or invoked through IPC/commands; source and binaries are not vendored | Follow their own notices when redistributing dependencies or a combined work |
-| Logo / SVG | Supplied project assets; project records describe logo creation for Blind Pew | No exhaustive image-similarity, trademark or ownership clearance performed |
+| Logo and historical icon | Supplied project assets; project records describe logo creation for Blind Pew | No exhaustive image-similarity, trademark or ownership clearance performed |
 | Privacy | No network client, telemetry, clipboard read, device hook or typed-text log found in runtime source | Sensitive-field protection depends on the client supplying IBus hints; this is not a blanket regulatory certificate |
 
 Targeted public searches for distinctive source strings returned no relevant
@@ -35,11 +35,13 @@ review does not establish freedom to use every later visual adaptation or mark.
 
 ## Traceable assets
 
+The digests identify files from the reviewed 2026-11-04 snapshot. The current
+profile file also includes the separately maintained Arabic table.
+
 | File | SHA-256 |
 |---|---|
 | `data/profiles.json` | `43928fa1af9fcbdab79675b91a0f803d60cf8995259ddbe3c2912eb961ab9184` |
 | `docs/blind-pew-logo.png` | `5488869d17ce641262171f3c47e851c3fa17ed28d284e7da10d152f9285dcc58` |
-| `assets/blind-pew.svg` | `28b84e05f978f71c4c66dd58f045faf24256a911e5e5c31469522a71538c73fc` |
 
 ## Sources consulted
 

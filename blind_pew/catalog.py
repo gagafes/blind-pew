@@ -6,8 +6,8 @@ from . import i18n
 
 COUNTRIES = {'be': 'BY', 'uk': 'UA', 'lt': 'LT', 'ka': 'GE', 'hy': 'AM', 'ru': 'RU', 'he': 'IL'}
 LANGUAGE_NAMES = dict(be='Belarusian', uk='Ukrainian', lt='Lithuanian',
-                      ka='Georgian', hy='Armenian', ru='Russian', he='Hebrew')
-PROFILE_ORDER = ('be', 'ua', 'li', 'ge', 'am', 'ru', 'rude', 'il')
+                      ka='Georgian', hy='Armenian', ru='Russian', he='Hebrew', ar='Arabic')
+PROFILE_ORDER = ('be', 'ua', 'li', 'ge', 'am', 'ru', 'rude', 'il', 'ar')
 
 
 def profile_title(ident, language=None):
@@ -27,7 +27,9 @@ def country_for(source_type, source_id):
         parts = source_id.split(':')
         if len(parts) != 3 or parts[1] not in profiles():
             return None
-        return COUNTRIES[profiles()[parts[1]]['language']]
+        language = profiles()[parts[1]]['language']
+        # Arabic spans multiple countries. Use its ISO 639-2 code in the tray.
+        return 'ARA' if language == 'ar' else COUNTRIES[language]
     if source_type == 'ibus' and source_id.startswith('xkb:'):
         source_id = source_id.split(':')[1]
         source_type = 'xkb'

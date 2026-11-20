@@ -19,6 +19,24 @@ def path():
     return base / 'blind-pew' / 'settings.json'
 
 
+def valid_session_backup(backup):
+    from .hotkey import valid_text
+    result = {}
+    if not isinstance(backup, dict):
+        return result
+    for desktop, values in backup.items():
+        if desktop not in ('gnome', 'ibus') or not isinstance(values, dict):
+            continue
+        shortcuts, global_mode = values.get('shortcut'), values.get('global')
+        if (isinstance(shortcuts, list) and len(shortcuts) <= 32 and
+                all(valid_text(value, 199) for value in shortcuts) and
+                isinstance(global_mode, bool)):
+            result[desktop] = {'shortcut': shortcuts, 'global': global_mode}
+            if desktop == 'ibus' and isinstance(values.get('layout'), bool):
+                result[desktop]['layout'] = values['layout']
+    return result
+
+
 def load():
     result = {**DEFAULTS, 'session_backup': {}, 'hotkey_backup': {}}
     try:
@@ -44,19 +62,8 @@ def load():
             result['favorite_profile'] = profile
         if data.get('favorite_base') in ('us', 'de'):
             result['favorite_base'] = data['favorite_base']
-        from .hotkey import valid_backup, valid_text
-        backup = data.get('session_backup', {})
-        if isinstance(backup, dict):
-            for desktop, values in backup.items():
-                if desktop not in ('gnome', 'ibus') or not isinstance(values, dict):
-                    continue
-                keys, global_mode = values.get('shortcut'), values.get('global')
-                if (isinstance(keys, list) and len(keys) <= 32 and
-                        all(valid_text(v, 199) for v in keys) and
-                        isinstance(global_mode, bool)):
-                    result['session_backup'][desktop] = {'shortcut': keys, 'global': global_mode}
-                    if desktop == 'ibus' and isinstance(values.get('layout'), bool):
-                        result['session_backup'][desktop]['layout'] = values['layout']
+        from .hotkey import valid_backup
+        result['session_backup'] = valid_session_backup(data.get('session_backup'))
         result['hotkey_backup'] = valid_backup(data.get('hotkey_backup'))
         return result
     except (OSError, ValueError, RecursionError):

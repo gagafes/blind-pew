@@ -5,6 +5,7 @@
 # bootstrap must precede importing their dependent modules.
 # ruff: noqa: E402
 """Build a small architecture-independent .deb without downloading anything."""
+import argparse
 import gzip
 import hashlib
 import io
@@ -33,6 +34,7 @@ RELEASE_DATE = next(line.rsplit('  ', 1)[1] for line in CHANGELOG.splitlines()
                     if line.startswith(' -- '))
 DEFAULT_EPOCH = int(parsedate_to_datetime(RELEASE_DATE).timestamp())
 HOMEPAGE = 'https://github.com/gagafes/blind-pew'
+PACKAGE_NAME = f'blind-pew_{VERSION}_all.deb'
 
 
 def component_xml():
@@ -53,7 +55,7 @@ def component_xml():
                   'description': 'Transliteration', 'textdomain': 'blind-pew',
                   'language': profile['language'], 'license': 'MIT',
                   'author': AUTHOR,
-                  'icon': '/usr/share/icons/hicolor/scalable/apps/blind-pew.svg',
+                  'icon': 'input-keyboard',
                   'layout': base, 'symbol': profile['symbol'],
                   'setup': '/usr/bin/blind-pew setup', 'rank': '0'}
         for key, value in fields.items():
@@ -72,18 +74,17 @@ def compressed(data):
 
 def stage(dest):
     install_translations(dest)
+    dest.chmod(0o755)
     share = dest / 'usr/share/blind-pew'
-    share.mkdir(parents=True)
-    for folder in ('blind_pew', 'data'):
-        shutil.copytree(ROOT / folder, share / folder,
-                        ignore=shutil.ignore_patterns('__pycache__', '*.pyc'))
+    modules = share / 'blind_pew'
+    modules.mkdir(parents=True)
+    for source in (ROOT / 'blind_pew').glob('*.py'):
+        shutil.copyfile(source, modules / source.name)
     for source, target in [
         ('assets/blind-pew', 'usr/bin/blind-pew'),
+        ('data/profiles.json', 'usr/share/blind-pew/data/profiles.json'),
         ('assets/blind-pew.desktop', 'usr/share/applications/blind-pew.desktop'),
-        ('assets/blind-pew.svg', 'usr/share/icons/hicolor/scalable/apps/blind-pew.svg'),
         ('docs/blind-pew-logo.png', 'usr/share/blind-pew/docs/blind-pew-logo.png'),
-        ('docs/marketing/transliteration-demo.gif',
-         'usr/share/doc/blind-pew/docs/marketing/transliteration-demo.gif'),
         ('LICENSE', 'usr/share/doc/blind-pew/LICENSE'),
         ('assets/gnome-extension/LICENSE', 'usr/share/gnome-shell/extensions/blind-pew@local/LICENSE'),
         ('assets/gnome-extension/metadata.json', 'usr/share/gnome-shell/extensions/blind-pew@local/metadata.json'),
@@ -99,10 +100,7 @@ def stage(dest):
     doc = dest / 'usr/share/doc/blind-pew'
     (doc / 'docs').mkdir(exist_ok=True)
     for name in ('README.be.md', 'README.uk.md', 'README.de.md', 'README.ru.md', 'README.md'):
-        # Download links belong to the repository, not the installed package.
-        content = (ROOT / name).read_text(encoding='utf-8')
-        (doc / name).write_text(''.join(line for line in content.splitlines(keepends=True)
-                                      if '](downloads/' not in line), encoding='utf-8')
+        shutil.copyfile(ROOT / name, doc / name)
     for name in ('TESTING.md', 'REFERENCE.md', 'RELEASE.md', 'LEGAL_REVIEW.md', 'COMPARISON.md'):
         content = (ROOT / 'docs' / name).read_text(encoding='utf-8')
         (doc / 'docs' / name).write_text(content.replace('../CHANGELOG.md', '../changelog.gz'),
@@ -143,10 +141,11 @@ def build():
             'Description: Blind Pew keyboard switcher and offline transliteration\n'
             ' Independent IBus engine implementing functional input tables of\n'
             ' Translit.ru for Belarusian, Ukrainian, Lithuanian, Georgian,\n'
-            ' Armenian, Russian and Hebrew, with GTK3 and GTK4 input support.\n'
-            ' Includes seven transliteration languages, global F12 and mouse-wheel\n'
+            ' Armenian, Russian and Hebrew. An Arabic phonetic profile is also included.\n'
+            ' Supports input in GTK3 and GTK4 applications.\n'
+            ' Includes eight transliteration languages, global F12 and mouse-wheel\n'
             ' on/off switching and automatic IBus startup.\n'
-            ' Native GTK preferences include a live country-code tray indicator.\n'
+            ' Native GTK preferences include a live input-source tray indicator.\n'
             ' Designed for Debian 13 and Ubuntu 24.04, GNOME and Xfce.\n', encoding='utf-8')
         # Debian's md5sums format is for installed-file checks. Published
         # downloads use SHA-256; no security decision relies on this MD5.
@@ -162,7 +161,7 @@ def build():
         for p in sorted(dest.rglob('*'), reverse=True):
             os.utime(p, (epoch, epoch), follow_symlinks=False)
         os.utime(dest, (epoch, epoch))
-        artifact = output / f'blind-pew_{VERSION}_all.deb'
+        artifact = output / PACKAGE_NAME
         subprocess.run(['dpkg-deb', '--root-owner-group', '-Zxz', '-z9', '--build',
                         str(dest), str(artifact)], check=True,
                        env={**os.environ, 'SOURCE_DATE_EPOCH': str(epoch)})
@@ -170,4 +169,10 @@ def build():
 
 
 if __name__ == '__main__':
-    build()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--print-package-name', action='store_true',
+                        help='print the expected DEB filename without building')
+    if parser.parse_args().print_package_name:
+        print(PACKAGE_NAME)
+    else:
+        build()

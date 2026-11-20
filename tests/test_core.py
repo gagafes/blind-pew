@@ -3,7 +3,7 @@
 import random
 import string
 import unittest
-from blind_pew.core import Composer, convert, engines, profiles
+from blind_pew.core import Composer, convert, convert_chunks, engines, profiles
 
 
 def whole_document_oracle(text, profile):
@@ -78,12 +78,33 @@ class ReferenceCases(unittest.TestCase):
         self.assertEqual([ord(c) for c in convert('shloms', 'il')],
                          [0x5E9, 0x5DC, 0x5D5, 0x5DD])
 
+    def test_arabic_spelling_and_literal_digits(self):
+        cases = [
+            ('slam mr.7ba', 'سلام مرحبا'),
+            ('sh kh gh th dh s+h jh g+h', 'ش خ غ ث ذ سه جه gه'),
+            ('.2 .3 .7 .a .i .A .w .y .h .Y', 'ء ع ح أ إ آ ؤ ئ ة ى'),
+            ('b.f b.k b.u b.o b.~', 'بَ بِ بُ بْ بّ'),
+            ('SH-123 3.7 1.27 +.3 +.a .? ., .;', 'SH-123 3.7 1.27 .3 .a ؟ ، ؛'),
+        ]
+        for source, expected in cases:
+            with self.subTest(source=source):
+                self.assertEqual(convert(source, 'ar'), expected)
+
+    def test_arabic_prefix_can_span_chunks(self):
+        self.assertEqual(''.join(convert_chunks(('mr.', '7ba'), 'ar')), 'مرحبا')
+        composer = Composer('ar')
+        self.assertEqual(composer.feed('.'), '')
+        self.assertEqual(composer.pending, '.')
+        self.assertTrue(composer.backspace())
+        self.assertEqual(composer.feed('7') + composer.flush(), '7')
+
     def test_reverse_scripts(self):
         for mode, source, expected in [
             ('ua', 'Україна є ґ', "Ukrai'na je g'"),
             ('ge', 'გამარჯობა', 'gamarjoba'),
             ('am', 'շ ղ ժ', 'sh gh jh'),
             ('il', 'שלום', 'shlvms'),
+            ('ar', 'مرحبا بِ؟', 'mr.7ba b.k.?'),
             ('be', 'Ў і ь', 'W i "'),
             ('li', 'ą č ę ė į š ų ū ž', 'aa cx ee ex ii sx uu ux zx'),
         ]:
@@ -117,10 +138,10 @@ class ReferenceCases(unittest.TestCase):
 
     def test_engine_ids(self):
         names = [name for name, _, _ in engines()]
-        self.assertEqual(len(names), 16)
+        self.assertEqual(len(names), 18)
         self.assertEqual(len(set(names)), len(names))
         for mode, language in [('ua', 'uk'), ('ge', 'ka'), ('am', 'hy'), ('il', 'he'),
-                               ('be', 'be'), ('li', 'lt')]:
+                               ('be', 'be'), ('li', 'lt'), ('ar', 'ar')]:
             self.assertEqual(profiles()[mode]['language'], language)
             for base in ('us', 'de'):
                 self.assertIn(f'blind-pew:{mode}:{base}', names)

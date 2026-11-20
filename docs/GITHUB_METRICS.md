@@ -13,7 +13,7 @@ This project runs a lightweight, Python-standard-library-only collector using
 The regular `GITHUB_TOKEN` is sufficient for downloading release counters and writing the archive,
 but **not** for GitHub's Traffic API. Create a [fine-grained personal access token](https://github.com/settings/personal-access-tokens/new) scoped to
 `gagafes/blind-pew` with **Repository permissions → Administration → Read-only**.
-Then open [Actions secrets](https://github.com/gagafes/blind-pew/settings/secrets/actions), create a repository secret named **`TRAFFIC_READ_TOKEN`**, and paste the token there.
+While signed in as a repository maintainer, open [Actions secrets](https://github.com/gagafes/blind-pew/settings/secrets/actions), create a repository secret named **`TRAFFIC_READ_TOKEN`**, and paste the token there.
 
 Do **not** paste the token into chats, issues, code or README files. Rotate it before it expires. Until
 this secret is configured the workflow reports traffic as unavailable. Non-scheduled runs can still save download counters.

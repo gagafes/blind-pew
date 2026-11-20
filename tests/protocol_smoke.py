@@ -78,6 +78,7 @@ def committed():
 
 
 samples = {
+    'ar': ("ID-42 mr.7ba 3.7 ", "ID-42 مرحبا 3.7 "),
     'ru': ('Privet, mir! sh zh shh raj+on ', 'Привет, мир! ш ж щ район '),
     'rude': ('w v z s c h x ei sch tsch ', 'в ф ц з с ч кс ай ш ч '),
     'ua': ("Pryvit! Ukrai'na je g' ", 'Привіт! Україна є ґ '),
@@ -121,6 +122,22 @@ for mode, sequence, pending in [('ua', 'g', 'г'), ('ge', 'k', 'ქ'),
     engine.destroy()
     pump()
 print('PASS scripts: preedit Backspace, labels and shortcut passthrough')
+
+engine = Engine(connection, object_path, 'blind-pew:ar:us')
+call('FocusIn')
+events.clear()
+type_text('ID-42 slam .')
+assert engine.composer.pending == '.'
+assert key(IBus.KEY_BackSpace)
+type_text('7 s')
+assert not key(IBus.KEY_Left)
+assert committed() == 'ID-42 سلام 7 س'
+type_text('h ')
+assert committed() == 'ID-42 سلام 7 سه '
+assert not key(IBus.KEY_BackSpace)  # committed text is edited by the client
+engine.destroy()
+pump()
+print('PASS Arabic mixed text, prefix Backspace and cursor boundary')
 
 engine = Engine(connection, object_path, 'blind-pew:ru:us')
 call('FocusIn')

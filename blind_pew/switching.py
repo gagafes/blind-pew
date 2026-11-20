@@ -6,13 +6,13 @@ def is_translit(source):
 
 
 class TogglePair:
-    """One remembered ordinary source and one selected transliteration."""
+    """One remembered desktop source and one selected transliteration."""
     def __init__(self, selected):
         self.selected = selected
         self.normal = None
 
     def observed(self, source):
-        if source and (source[0] == 'xkb' or source[1].startswith('xkb:')):
+        if source and source[0] in ('ibus', 'xkb') and source[1] and not is_translit(source):
             self.normal = tuple(source)
 
     def target(self, current, fallback):

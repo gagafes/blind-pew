@@ -1,3 +1,14 @@
+blind-pew (0.2.0-1) unstable; urgency=medium
+
+  * Add offline Arabic phonetic input for QWERTY and QWERTZ.
+  * Replace the old application icon with the themed keyboard icon.
+  * Restore the previous IBus input method when toggling transliteration off.
+  * Preserve edited shortcuts and refuse unrecoverable desktop settings.
+  * Fix CLI output when a pipeline reader closes early.
+  * Refresh release checks and installation documentation.
+
+ -- Andrey Popovich <gagafes@gmail.com>  Fri, 20 Nov 2026 00:00:00 +0000
+
 blind-pew (0.1.0-2) unstable; urgency=medium
 
   * Harden preferences and shortcut backups; save originals before activation.

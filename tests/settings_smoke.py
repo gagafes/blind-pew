@@ -102,4 +102,13 @@ with tempfile.TemporaryDirectory() as tmp:
         assert keys.get_strv(key) == original
         for settings, setting, _, field in targets:
             assert settings.get_value(setting).unpack() == originals[field]
+        large_shortcut_list = [f'<Alt>F{number}' for number in range(1, 34)]
+        keys.set_strv(key, large_shortcut_list)
+        try:
+            integration.configure_session()
+            raise AssertionError('Took over shortcuts without a readable backup')
+        except RuntimeError:
+            pass
+        assert keys.get_strv(key) == large_shortcut_list
+        assert name not in config.load()['session_backup']
         print('PASS', desktop, 'F12/global/keyboard-base: preserve originals, locked settings, rollback and restore')

@@ -5,10 +5,8 @@
 
 Suggested repository description:
 
-> Offline transliteration switcher for Linux. Eight profiles, QWERTY/QWERTZ, F12 toggle. Debian & Ubuntu, GNOME & Xfce.
+> Offline transliteration switcher for Linux. Nine profiles, QWERTY/QWERTZ, F12 toggle. Debian & Ubuntu, GNOME & Xfce.
 
 Suggested topics:
 
 `linux`, `transliteration`, `ibus`, `keyboard`, `input-method`, `debian`, `ubuntu`, `gnome`, `xfce`, `python`, `gtk`, `multilingual`, `qwerty`, `qwertz`
-
-The published v0.1.0-2 tag and DEB remain fixed. CI builds the current main branch and separately rebuilds the published source to verify the distributed DEB.

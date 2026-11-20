@@ -128,6 +128,8 @@ def configure_session():
     saved = backups.setdefault(desktop, {})
     for settings, key, _, field in targets:
         saved.setdefault(field, settings.get_value(key).unpack())
+    if config.valid_session_backup(backups) != backups:
+        raise RuntimeError(tr('Settings unavailable'))
     _write_session([(settings, key, value) for settings, key, value, _ in targets],
                    lambda: config.update(session_backup=backups), save_first=True)
 

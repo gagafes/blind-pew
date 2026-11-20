@@ -105,6 +105,17 @@ class Streaming(unittest.TestCase):
                     self.assertEqual(''.join(convert_chunks(
                         (sample[:boundary], sample[boundary:]), profile, reverse)), expected)
 
+    def test_cli_handles_a_closed_output_pipe_without_traceback(self):
+        import sys
+        for args in (['list'], ['convert', '--profile', 'ar']):
+            with self.subTest(args=args), subprocess.Popen(
+                    [sys.executable, '-m', 'blind_pew.cli', *args],
+                    stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as child:
+                child.stdout.close()
+                _, error = child.communicate(b'slam ' * 100, timeout=5)
+                self.assertEqual(error, b'')
+                self.assertEqual(child.returncode, 1)
+
     def test_cli_reads_bounded_chunks_without_newlines(self):
         class BoundedReader(io.StringIO):
             def read(self, size=-1):
@@ -120,6 +131,28 @@ class Streaming(unittest.TestCase):
 
 
 class Packaging(unittest.TestCase):
+    def test_staging_normalizes_the_package_root_permissions(self):
+        from tools.build import stage
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / 'package'
+            target.mkdir()
+            target.chmod(0o775)
+            stage(target)
+            self.assertEqual(target.stat().st_mode & 0o777, 0o755)
+
+    def test_package_uses_the_system_keyboard_icon(self):
+        from tools.build import component_xml, stage
+        import xml.etree.ElementTree as ET
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / 'package'
+            stage(target)
+            self.assertFalse(list((target / 'usr/share/icons').rglob('blind-pew.svg')))
+            desktop = target / 'usr/share/applications/blind-pew.desktop'
+            self.assertIn('Icon=input-keyboard', desktop.read_text().splitlines())
+        icons = ET.fromstring(component_xml()).findall('./engines/engine/icon')
+        self.assertTrue(icons)
+        self.assertEqual({icon.text for icon in icons}, {'input-keyboard'})
+
     def test_installed_readme_images_and_release_metadata(self):
         from tools.build import stage, VERSION, __version__
         import re

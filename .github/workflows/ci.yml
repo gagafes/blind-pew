@@ -21,7 +21,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image: [ubuntu:24.04, debian:13]
+        include:
+          - image: ubuntu:24.04
+            artifact: blind-pew-ubuntu-24.04
+          - image: debian:13
+            artifact: blind-pew-debian-13
     env:
       DEBIAN_FRONTEND: noninteractive
       LANG: C.UTF-8
@@ -47,11 +51,13 @@ jobs:
           node --input-type=module --check < assets/gnome-extension/extension.js
       - name: Build twice and verify reproducibility
         run: |
+          deb=$(/usr/bin/python3 tools/build.py --print-package-name)
+          echo "DEB=$deb" >> "$GITHUB_ENV"
           /usr/bin/python3 tools/build.py
-          sha256sum dist/*.deb > /tmp/blind-pew-first-build.sha256
+          sha256sum "dist/$deb" > /tmp/blind-pew-first-build.sha256
           /usr/bin/python3 tools/build.py
           sha256sum --check /tmp/blind-pew-first-build.sha256
-          lintian --fail-on error dist/*.deb
+          lintian --fail-on error "dist/$deb"
       - name: Install, upgrade and exercise the packaged program
         run: |
           # Minimal Ubuntu images omit translations/manuals unless requested.
@@ -60,24 +66,22 @@ jobs:
           path-include=/usr/share/doc/blind-pew/*
           path-include=/usr/share/man/man1/blind-pew.1.gz
           EOF
-          apt-get install -y ./downloads/blind-pew_0.1.0-1_all.deb
-          apt-get install -y ./dist/blind-pew_0.1.0-2_all.deb
+          (cd downloads && sha256sum --check SHA256SUMS)
+          apt-get install -y ./downloads/blind-pew_0.1.0-2_all.deb
+          apt-get install -y "./dist/$DEB"
           dpkg --verify blind-pew
           PYTHONPATH=/usr/share/blind-pew /usr/bin/python3 tests/installed_smoke.py
           sh tests/run_ibus_smoke.sh
           dpkg-query -W -f='${Package}\t${Version}\n' > dist/system-packages.tsv
-          (cd dist && sha256sum ./*.deb > SHA256SUMS)
+          (cd dist && sha256sum "$DEB" > SHA256SUMS)
       - name: Verify removal and clean reinstall
         run: |
           apt-get remove -y blind-pew
           test ! -e /usr/bin/blind-pew
           test ! -e /usr/share/ibus/component/blind-pew.xml
-          apt-get install -y ./dist/blind-pew_0.1.0-2_all.deb
+          apt-get install -y "./dist/$DEB"
           blind-pew --version
           dpkg --verify blind-pew
-          if test -f downloads/blind-pew_0.1.0-2_all.deb; then
-            (cd downloads && sha256sum --check SHA256SUMS)
-          fi
       - name: Check out the published release source for artifact verification
         if: matrix.image == 'ubuntu:24.04'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -93,8 +97,11 @@ jobs:
           cmp .release-validation/dist/blind-pew_0.1.0-2_all.deb downloads/blind-pew_0.1.0-2_all.deb
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
-          name: blind-pew-${{ strategy.job-index }}
-          path: dist/*
+          name: ${{ matrix.artifact }}
+          path: |
+            dist/${{ env.DEB }}
+            dist/SHA256SUMS
+            dist/system-packages.tsv
           if-no-files-found: error
 
   security:
@@ -142,13 +149,14 @@ jobs:
           # APT creates this marker even though the container has no logind.
           # Let GNOME use its built-in non-systemd login manager here.
           if test -d /run/systemd/seats; then rmdir /run/systemd/seats; fi
+          deb=$(/usr/bin/python3 tools/build.py --print-package-name)
           /usr/bin/python3 tools/build.py
           cat > /etc/dpkg/dpkg.cfg.d/zz-blind-pew-test-payload <<'EOF'
           path-include=/usr/share/locale/*
           path-include=/usr/share/doc/blind-pew/*
           path-include=/usr/share/man/man1/blind-pew.1.gz
           EOF
-          apt-get install -y ./dist/blind-pew_0.1.0-2_all.deb
+          apt-get install -y "./dist/$deb"
       - name: Xfce and real GTK3/GTK4 typing
         run: timeout 180s dbus-run-session -- xvfb-run -a -s '-screen 0 1280x960x24 -nolisten tcp' bash tests/run_installed_desktop.sh xfce
       - name: GNOME Wayland integration

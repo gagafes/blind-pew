@@ -39,7 +39,9 @@ def frame(label, text, active=True):
 
 def main():
     frames, durations = [], []
-    for profile, label, text in [('be', 'Belarusian', 'Pryvitanne!'), ('ua', 'Ukrainian', "Ukrai'na je g'")]:
+    for profile, label, text, expected in (
+            ('be', 'Belarusian', 'Pryvitanne!', 'Прывітанне!'),
+            ('ua', 'Ukrainian', "Ukrai'na je g'", 'Україна є ґ')):
         composer = Composer(profile)
         committed = ''
         frames.append(frame(label, ''))
@@ -48,7 +50,8 @@ def main():
             committed += composer.feed(char)
             frames.append(frame(label, committed + composer.pending))
             durations.append(140)
-        assert committed + composer.flush() == ('Прывітанне!' if profile == 'be' else 'Україна є ґ')
+        if committed + composer.flush() != expected:
+            raise RuntimeError(f'Unexpected conversion for {profile}')
         durations[-1] = 1800
         frames.append(frame(label + ' · toggled off', 'Hello, Linux!', active=False))
         durations.append(1300)

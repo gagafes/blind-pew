@@ -17,10 +17,13 @@ from blind_pew.core import engines
 assert Path(blind_pew.__file__).resolve().is_relative_to('/usr/share/blind-pew')
 assert subprocess.check_output(['blind-pew', '--version'], text=True).strip() == blind_pew.__version__
 registered = subprocess.check_output(['blind-pew', 'list'], text=True).splitlines()
-assert len(registered) == 16, registered
+assert len(registered) == 18, registered
 result = subprocess.run(['blind-pew', 'convert', '--profile', 'ua'],
                         input="Ukrai'na je g'\n", capture_output=True, text=True, check=True)
 assert result.stdout == 'Україна є ґ\n', result
+result = subprocess.run(['blind-pew', 'convert', '--profile', 'ar'],
+                        input='mr.7ba 3.7\n', capture_output=True, text=True, check=True)
+assert result.stdout == 'مرحبا 3.7\n', result
 component = ET.parse('/usr/share/ibus/component/blind-pew.xml').getroot()
 assert {node.findtext('name') for node in component.find('engines')} == {name for name, _, _ in engines()}
 for language, _ in i18n.LANGUAGES:
@@ -32,7 +35,7 @@ assert metadata['shell-version'] == ['46', '47', '48']
 for path in ('LICENSE', 'copyright', 'docs/screenshots/gnome-settings-en.png',
              'THIRD_PARTY_NOTICES.md', 'LICENSES/LGPL-3.0.txt'):
     assert Path('/usr/share/doc/blind-pew', path).is_file(), path
-print('PASS installed CLI, 16 engines, 49 gettext catalogs, extension and documentation')
+print('PASS installed CLI, 18 engines, 49 gettext catalogs, extension and documentation')
 
 import os
 env = {key: value for key, value in os.environ.items() if key not in ('DISPLAY', 'WAYLAND_DISPLAY')}
