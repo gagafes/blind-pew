@@ -6,9 +6,9 @@
   <img src="docs/blind-pew-logo.png" alt="Blind Pew" width="180">
 </p>
 
-**Debian 13 · Ubuntu 24.04 · XFCE / GNOME · MIT**
+**0.2.0 · Debian 13 · Ubuntu 24.04 · XFCE / GNOME · MIT**
 
-**[Download Blind Pew for Debian / Ubuntu](https://github.com/gagafes/blind-pew/releases/latest)**
+**[Download Blind Pew for Debian / Ubuntu](https://github.com/gagafes/blind-pew/releases/tag/v0.2.0-1)**
 
 A small offline transliteration switcher. Choose a language and use **F12**
 or the **mouse wheel over the tray icon** to turn transliteration on or off.
@@ -48,8 +48,6 @@ All nine profiles support **QWERTY** and **QWERTZ**. Eight profiles follow the
 functional input tables of [Translit.ru](https://translit.ru/).
 Blind Pew is an independent project; see [reference information](docs/REFERENCE.md).
 
-The profile list describes the source tree. The Arabic profile is available from version 0.2.0.
-
 Use lowercase Latin keys for Arabic. Try `slam → سلام` or `mr.7ba → مرحبا`.
 Type `.2` for hamza and `.f`, `.k` or `.u` for short vowels. Numbers such as
 `42` and `3.7` are preserved. Type `+.7` for a literal `.7` or `s+h` for
@@ -60,7 +58,7 @@ separate letters. See **Input table** for all mappings.
 Download the DEB and `SHA256SUMS` from the release page. In a directory containing only that Blind Pew DEB and its checksum file, run:
 
 ~~~sh
-sha256sum --check SHA256SUMS && sudo apt install ./blind-pew_*_all.deb
+sha256sum --check SHA256SUMS && sudo apt install ./blind-pew_0.2.0-1_all.deb
 ~~~
 
 Log out and back into your desktop session, then open **Blind Pew**

@@ -6,9 +6,9 @@
   <img src="docs/blind-pew-logo.png" alt="Blind Pew" width="180">
 </p>
 
-**Debian 13 · Ubuntu 24.04 · XFCE / GNOME · MIT**
+**0.2.0 · Debian 13 · Ubuntu 24.04 · XFCE / GNOME · MIT**
 
-**[Завантажити Blind Pew для Debian / Ubuntu](https://github.com/gagafes/blind-pew/releases/latest)**
+**[Завантажити Blind Pew для Debian / Ubuntu](https://github.com/gagafes/blind-pew/releases/tag/v0.2.0-1)**
 
 Невеликий офлайн-перемикач трансліту. Виберіть мову та вмикайте або
 вимикайте трансліт клавішею **F12** чи **коліщатком миші над значком у треї**.
@@ -45,8 +45,6 @@ GNOME 46 / Wayland в Ubuntu 24.04; мова інтерфейсу програм
 [Translit.ru](https://translit.ru/). Blind Pew — незалежний проєкт;
 [відомості про джерела](docs/REFERENCE.md).
 
-Список профілів описує цей вихідний код. Арабський профіль доступний починаючи з версії 0.2.0.
-
 Для арабської використовуйте малі латинські літери, наприклад `slam → سلام`
 або `mr.7ba → مرحبا`. Хамза вводиться через `.2`, короткі голосні — через `.f`,
 `.k` і `.u`. Числа на кшталт `42` і `3.7` зберігаються. Для буквального введення
@@ -57,7 +55,7 @@ GNOME 46 / Wayland в Ubuntu 24.04; мова інтерфейсу програм
 Завантажте DEB і `SHA256SUMS` зі сторінки випуску. Відкрийте теку, де є лише завантажений пакунок Blind Pew і файл контрольних сум, і виконайте команди:
 
 ~~~sh
-sha256sum --check SHA256SUMS && sudo apt install ./blind-pew_*_all.deb
+sha256sum --check SHA256SUMS && sudo apt install ./blind-pew_0.2.0-1_all.deb
 ~~~
 
 Вийдіть із графічного сеансу та увійдіть знову. Відкрийте **Blind Pew**

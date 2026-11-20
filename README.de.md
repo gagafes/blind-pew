@@ -6,9 +6,9 @@
   <img src="docs/blind-pew-logo.png" alt="Blind Pew" width="180">
 </p>
 
-**Debian 13 · Ubuntu 24.04 · XFCE / GNOME · MIT**
+**0.2.0 · Debian 13 · Ubuntu 24.04 · XFCE / GNOME · MIT**
 
-**[Blind Pew für Debian / Ubuntu herunterladen](https://github.com/gagafes/blind-pew/releases/latest)**
+**[Blind Pew für Debian / Ubuntu herunterladen](https://github.com/gagafes/blind-pew/releases/tag/v0.2.0-1)**
 
 Ein kleines Programm zur Offline-Transliteration. Sprache auswählen und
 die Transliteration mit **F12** oder dem **Mausrad über dem Symbol im
@@ -46,8 +46,6 @@ Acht Profile verwenden die funktionalen Eingabetabellen von
 [Translit.ru](https://translit.ru/). Blind Pew ist ein unabhängiges Projekt;
 siehe [Angaben zu den Referenzen](docs/REFERENCE.md).
 
-Die Profilliste beschreibt diesen Quellstand. Das arabische Profil ist ab Version 0.2.0 verfügbar.
-
 Für Arabisch lateinische Kleinbuchstaben verwenden, etwa `slam → سلام` oder
 `mr.7ba → مرحبا`. `.2` steht für Hamza, `.f`, `.k` und `.u` für kurze Vokale.
 Zahlen wie `42` und `3.7` bleiben erhalten. `+.7` ergibt wörtlich `.7`, und
@@ -58,7 +56,7 @@ Zahlen wie `42` und `3.7` bleiben erhalten. `+.7` ergibt wörtlich `.7`, und
 Das DEB und `SHA256SUMS` von der Release-Seite herunterladen. Einen Ordner öffnen, der nur das heruntergeladene Blind-Pew-Paket und seine Prüfsummendatei enthält. Dort die folgenden Befehle ausführen:
 
 ~~~sh
-sha256sum --check SHA256SUMS && sudo apt install ./blind-pew_*_all.deb
+sha256sum --check SHA256SUMS && sudo apt install ./blind-pew_0.2.0-1_all.deb
 ~~~
 
 Von der grafischen Sitzung abmelden und erneut anmelden. **Blind Pew**

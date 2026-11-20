@@ -22,7 +22,8 @@ sh tests/run_protocol_smoke.sh
 desktop-file-validate assets/blind-pew.desktop
 node --input-type=module --check < assets/gnome-extension/extension.js
 /usr/bin/python3 tools/build.py
-lintian --fail-on error dist/*.deb
+deb=$(/usr/bin/python3 tools/build.py --print-package-name)
+lintian --fail-on error "dist/$deb"
 ```
 
 Run GUI checks sequentially. They isolate configuration, cache, GSettings,
@@ -87,10 +88,9 @@ On a disposable desktop:
 ## Package inspection and reproducibility
 
 ```sh
-for deb in dist/blind-pew_*_all.deb; do
-  dpkg-deb --info "$deb"
-  dpkg-deb --contents "$deb"
-done
+deb=$(python3 tools/build.py --print-package-name)
+dpkg-deb --info "dist/$deb"
+dpkg-deb --contents "dist/$deb"
 ```
 
 The package includes 18 IBus engines, 49 catalogs, the About logo, five READMEs,
