@@ -8,7 +8,7 @@
 
 **0.2.0 · Debian 13 · Ubuntu 24.04 · XFCE / GNOME · MIT**
 
-**[Спампаваць Blind Pew для Debian / Ubuntu](https://github.com/gagafes/blind-pew/releases/tag/v0.2.0-1)**
+**[Спампаваць DEB 0.2.0-1](https://github.com/gagafes/blind-pew/releases/download/v0.2.0-1/blind-pew_0.2.0-1_all.deb)** · [SHA256SUMS](https://github.com/gagafes/blind-pew/releases/download/v0.2.0-1/SHA256SUMS) · [Заўвагі да выпуску](https://github.com/gagafes/blind-pew/releases/tag/v0.2.0-1)
 
 Невялікі аўтаномны пераключальнік транслітарацыі. Выберыце мову і ўключайце
 ці выключайце транслітарацыю клавішай **F12** або **колцам мышы над значком у трэі**.
@@ -16,7 +16,7 @@
 
 ## Здымкі экрана
 
-GNOME 46 / Wayland у Ubuntu 24.04; інтэрфейс праграмы — па-англійску.
+Blind Pew 0.1.0 у GNOME 46 / Wayland на Ubuntu 24.04 з англійскім інтэрфейсам.
 
 **Налады і прыклад транслітарацыі**
 

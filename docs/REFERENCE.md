@@ -28,7 +28,7 @@ input-source API. GNOME source code is not copied.
 Interface catalogs are independently authored. System-language selection
 follows the behavior of Malferma Libro; its source and catalogs are not bundled.
 
-To refresh tables from locally saved reference pages:
+From the source checkout, refresh tables from locally saved reference pages:
 
 ~~~sh
 python3 tools/import_reference.py /path/to/reference-pages

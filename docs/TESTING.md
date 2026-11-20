@@ -48,7 +48,7 @@ automated checks cover catalog completeness and parsing.
 | Check | Scope |
 |---|---|
 | Source regressions | Unit, IBus protocol, GTK GUI and GNOME bridge tests |
-| Package | Build twice and compare SHA-256, Lintian errors, upgrade from the published 0.1.0-2 package, installed-file verification, removal and clean reinstall |
+| Package | Build twice and compare SHA-256, Lintian errors, upgrade from the published 0.1.0-2 DEB with a pinned SHA-256, installed-file verification, removal and clean reinstall |
 | Installed program | CLI, profile/engine registration, 49 compiled catalogs, payload/licenses and friendly headless startup failure |
 | Actual IBus daemon | All nine profiles, both bases across the test cases, committed text, Backspace, modifiers, focus changes and password bypass |
 | Xfce desktop | Real Xfwm4, settings daemon and panel; installed application; X11 F12 key event; tray callbacks, About, live language and restoration on quit |
